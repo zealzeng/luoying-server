@@ -1,7 +1,16 @@
 # Luoying Server Framework
 Luoying server是一个轻量级的服务器开发框架，方便开发者快速的定制多种协议的服务器，servlet style的API和简单的容器注入模式让开发者专注于业务实现。
 
-# HTTP服务器
+## Maven地址
+```
+<dependency>
+  <groupId>com.whlylc</groupId>
+  <artifactId>luoying-server</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+## HTTP服务器
 - HttpRequest和HttpResponse与Servlet API接近
 - ConcurrentApplicationContext是简单的BeanFactory实现, 方便注入所需组件
 
@@ -25,7 +34,7 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
     }
 ```
 
-# Socket服务器
+## Socket服务器
 - socket通信协议简单使用Netty的LengthFieldBasedFrameDecoder，即长度+消息体
 ```java
     public static void main(String[] args) throws Exception {
@@ -48,7 +57,7 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
     }
 ```    
 
-# 多端口服务器
+## 多端口服务器
 ```java
     public static void main(String[] args) throws Exception {
 
@@ -80,3 +89,9 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
 
     }
 ```
+
+## 开发计划
+想实现的东西不少,当前版本结合Fabric Rest稍稳定后规划。
+
+## 合作伙伴召集
+待定
