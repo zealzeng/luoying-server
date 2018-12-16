@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.whlylc</groupId>
-    <artifactId>server</artifactId>
+    <artifactId>luoying-server</artifactId>
     <version>0.1.0</version>
     <name>Luoying server</name>
     <description>Luoying server</description>
