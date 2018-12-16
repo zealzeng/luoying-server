@@ -49,3 +49,34 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
 ```    
 
 # 多端口服务器
+```java
+    public static void main(String[] args) throws Exception {
+
+        HttpService httpService = new HttpService() {
+            @Override
+            public void service(HttpRequest request, HttpResponse response) throws Exception {
+                response.write(String.valueOf(System.currentTimeMillis()));
+            }
+        };
+        SockService sockService = new SockService() {
+            @Override
+            public void service(SockRequest request, SockResponse response) throws Exception {
+                System.out.println(request.getRequestBody().toString());
+                response.write(String.valueOf(System.currentTimeMillis()));
+            }
+        };
+
+        //Attach application if it's necessary
+        ConcurrentApplicationContext ctx = new ConcurrentApplicationContext();
+        ctx.addBean("mybatis", new String("mybatisService"));
+        sockService.setApplicationContext(ctx);
+        httpService.setApplicationContext(ctx);
+
+        DefaultHttpChannelService httpChannelService = new DefaultHttpChannelService(8080, httpService);
+        DefaultSockChannelService sockChannelService = new DefaultSockChannelService(9090, sockService);
+        ChannelService[] services = new ChannelService[] {httpChannelService, sockChannelService};
+        MultiChannelServer server = new MultiChannelServer(services);
+        server.startup();
+
+    }
+```
