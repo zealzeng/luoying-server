@@ -27,8 +27,7 @@
     <developers>
     <developer>
         <name>Zeal Zeng</name>
-        <email>zealvampire@gmail.com</email>
-        <organization>Wuhan luoying</organization>
+        <organization>Wuhan Luoying</organization>
         <url>https://github.com/zealzeng/luoying-server</url>
     </developer>
     </developers>
@@ -88,6 +87,20 @@
                     </execution>
                 </executions>
             </plugin>
+             <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+                <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>sign</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
         </plugins>
     </build>
 
@@ -100,5 +113,18 @@
         </dependency>
 
     </dependencies>
+
+
+<distributionManagement>
+    <snapshotRepository>
+        <id>central-snapshots</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+     </snapshotRepository>
+     <repository>
+        <id>central-stage</id>
+        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      </repository>
+</distributionManagement>
+
 
 </project>
