@@ -10,31 +10,40 @@ import io.netty.util.CharsetUtil;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
+ * Default implementation of http request
  * Created by Zeal on 2018/9/16 0016.
  */
 public class DefaultHttpRequest implements HttpRequest {
 
+    /** Like servlet context */
     private ServiceContext serviceContext = null;
 
+    /** Default character encoding */
     private Charset characterEncoding = StandardCharsets.UTF_8;
 
+    /** Netty http request */
     private FullHttpRequest request = null;
 
+    /** Requst URI */
     private String uri = null;
 
+    /** Request path */
     private String path = null;
 
+    /** Query string */
     private String queryString = null;
 
+    /** Request body */
     private String requestBody = null;
 
+    /** Request parameters */
     private Map<String,List<String>> parameters = null;
+
+    /** Attribute map */
+    private Map<String,Object> attributeMap = null;
 
     public DefaultHttpRequest(ServiceContext serviceContext, FullHttpRequest request) {
         this.serviceContext = serviceContext;
@@ -97,60 +106,120 @@ public class DefaultHttpRequest implements HttpRequest {
         this.parameters.putAll(parameters);
     }
 
+    /**
+     * Get http header by name
+     * @param name
+     * @return
+     */
     public String getHeader(String name) {
         return this.request.headers().get(name);
     }
 
+    /**
+     * Get all header names
+     * @return
+     */
     public Set<String> getHeaderNames() {
         //FIXME Support readonly
         return this.request.headers().names();
     }
 
+    /**
+     * Get headers by name
+     * @param name
+     * @return
+     */
     public List<String> getHeaders(String name) {
         //FIXME Support readonly
         return this.request.headers().getAll(name);
     }
 
+    /**
+     * Get integer header
+     * @param name
+     * @return
+     */
     public int getIntHeader(String name) {
         return this.request.headers().getInt(name);
     }
 
+    /**
+     * Get http method
+     * @return
+     */
     public String getMethod() {
         return this.request.method().name();
     }
 
+    /**
+     * Get request URI
+     * @return
+     */
     public String getRequestURI() {
         return this.uri;
     }
 
+    /**
+     * Get request path
+     * @return
+     */
     public String getRequestPath() {
         return this.path;
     }
 
+    /**
+     * Get query string
+     * @return
+     */
     public String getQueryString() {
         return this.queryString;
     }
 
+    /**
+     * Get request body
+     * @return
+     */
     public String getRequestBody() {
         return this.requestBody;
     }
 
+    /**
+     * Get content type
+     * @return
+     */
     public String getContentType() {
         return this.request.headers().get(HttpHeaderNames.CONTENT_TYPE);
     }
 
+    /**
+     * Get content length
+     * @return
+     */
     public int getContentLength() {
         return this.request.headers().getInt(HttpHeaderNames.CONTENT_LENGTH, 0);
     }
 
+    /**
+     * Get protocol
+     * @return
+     */
     public String getProtocol() {
         return this.request.protocolVersion().text();
     }
 
+    /**
+     * Get scheme
+     * @return
+     */
     public String getScheme() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Get request parameter
+     * @param name
+     * @return
+     */
     public String getParameter(String name) {
         if (this.parameters == null || this.parameters.size() <= 0) {
             return null;
@@ -164,40 +233,72 @@ public class DefaultHttpRequest implements HttpRequest {
         }
     }
 
+    /**
+     * Get parameter names
+     * @return
+     */
     public Set<String> getParameterNames() {
         if (this.parameters == null || this.parameters.size() <= 0) {
             return null;
         }
         else {
-            //FIXME Support readonly
             return this.parameters.keySet();
         }
     }
 
+    /**
+     * Get request parameter map
+     * @return
+     */
     public Map<String, List<String>> getParameterMap() {
-        //FIXME Support readonly
         return this.parameters;
     }
 
-
+    /**
+     * Get server name
+     * @return
+     */
     public String getServerName() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Get server port
+     * @return
+     */
     public int getServerPort() {
         throw new UnsupportedOperationException();
     }
+
 
     public String getRemoteAddr() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Set request attribute, not thread safe
+     * @param name
+     * @param o
+     */
     public void setAttribute(String name, Object o) {
-        throw new UnsupportedOperationException();
+        if (this.attributeMap == null) {
+            this.attributeMap = new HashMap<>(6);
+        }
+        this.attributeMap.put(name, o);
     }
 
+    /**
+     * Get attribute by name
+     * @param name
+     * @return
+     */
     public Object getAttribute(String name) {
-        throw new UnsupportedOperationException();
+        if (this.attributeMap == null || this.attributeMap.size() <= 0) {
+            return null;
+        }
+        else {
+            return this.attributeMap.get(name);
+        }
     }
 
     public Charset getCharacterEncoding() {
