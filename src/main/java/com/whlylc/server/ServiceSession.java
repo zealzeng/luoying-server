@@ -7,7 +7,7 @@ package com.whlylc.server;
 public interface ServiceSession extends AttributeAware {
 
     /**
-     * Close session
+     * Close and invalidate session
      */
     void invalidate();
 
