@@ -4,8 +4,10 @@ import com.whlylc.server.ServiceContext;
 import com.whlylc.server.utils.StringUtils;
 import com.whlylc.server.utils.URLUtils;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.util.CharsetUtil;
 
 import java.nio.charset.Charset;
@@ -20,6 +22,8 @@ public class DefaultHttpRequest implements HttpRequest {
 
     /** Like servlet context */
     private ServiceContext serviceContext = null;
+
+    private ChannelHandlerContext ctx = null;
 
     /** Default character encoding */
     private Charset characterEncoding = StandardCharsets.UTF_8;
@@ -45,11 +49,41 @@ public class DefaultHttpRequest implements HttpRequest {
     /** Attribute map */
     private Map<String,Object> attributeMap = null;
 
-    public DefaultHttpRequest(ServiceContext serviceContext, FullHttpRequest request) {
+    private String scheme = null;
+
+    private String host = null;
+
+    private int port = 0;
+
+    public DefaultHttpRequest(ServiceContext serviceContext, FullHttpRequest request, ChannelHandlerContext ctx) {
         this.serviceContext = serviceContext;
         this.request = request;
+        this.ctx = ctx;
         parseURI();
+        parseHost();
         parseBody();
+    }
+
+    private void parseHost() {
+        String hostString = this.request.headers().get(HttpHeaderNames.HOST);
+        //FIXME optimize it
+        SslHandler ssl = ctx.channel().pipeline().get(SslHandler.class);
+        if (ssl != null) {
+            this.scheme = "https";
+        }
+        this.scheme = ssl != null ? "https" : "http";
+
+        if (StringUtils.isNotBlank(hostString)) {
+            int index = hostString.indexOf(':');
+            if (index != -1) {
+                this.host = hostString.substring(0, index);
+                this.port = Integer.parseInt(hostString.substring(index + 1));
+            }
+            //FIXME We have to confirm it's http or https
+            else {
+                this.port = ssl != null ? 443 : 80;
+            }
+        }
     }
 
     /**
@@ -212,7 +246,7 @@ public class DefaultHttpRequest implements HttpRequest {
      * @return
      */
     public String getScheme() {
-        throw new UnsupportedOperationException();
+        return this.scheme;
     }
 
     /**
@@ -315,7 +349,7 @@ public class DefaultHttpRequest implements HttpRequest {
 
     @Override
     public ServiceContext getServiceContext() {
-        return null;
+        return this.serviceContext;
     }
 
 

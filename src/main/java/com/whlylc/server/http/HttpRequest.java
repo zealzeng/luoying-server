@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Similar to HttpServletRequest
  * Created by Zeal on 2018/9/16 0016.
  */
 public interface HttpRequest extends ServiceRequest {

@@ -1,49 +1,61 @@
 package com.whlylc.server.sock;
 
-import com.whlylc.server.ConcurrentSession;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
+
+import java.nio.charset.Charset;
 
 /**
  * Created by Zeal on 2018/10/22 0022.
  */
-public class DefaultSockSession extends ConcurrentSession implements SockSession {
+public class DefaultSockSession /*extends ConcurrentSession*/ implements SockSession {
 
-    private ChannelHandlerContext channelHandlerContext = null;
+    private ChannelHandlerContext ctx = null;
 
-    /**
-     * @param channelHandlerContext
-     */
     public DefaultSockSession(ChannelHandlerContext channelHandlerContext) {
-        this.channelHandlerContext = channelHandlerContext;
+        this.ctx = channelHandlerContext;
     }
 
-    /**
-     */
     @Override
     public void invalidate() {
-        this.channelHandlerContext.channel().close();
+        this.ctx.channel().close();
     }
 
-    /**
-     * @param bytes
-     */
     @Override
     public void write(byte[] bytes) {
-        //FIXME copy or wrap?
-        ByteBuf byteBuf = Unpooled.copiedBuffer(bytes);
-        this.channelHandlerContext.writeAndFlush(byteBuf);
+        //ByteBuf byteBuf = Unpooled.copiedBuffer(bytes);
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
+        this.ctx.writeAndFlush(byteBuf);
+
     }
 
-    /**
-     * @param cs
-     */
     @Override
     public void write(CharSequence cs) {
-        //FIXME copy or wrap?
-        ByteBuf byteBuf = Unpooled.copiedBuffer(cs, CharsetUtil.UTF_8);
-        this.channelHandlerContext.writeAndFlush(byteBuf);
+        write(cs, CharsetUtil.UTF_8);
+    }
+
+    @Override
+    public void write(CharSequence cs, Charset charset) {
+        ByteBuf byteBuf = Unpooled.copiedBuffer(cs, charset);
+        this.ctx.writeAndFlush(byteBuf);
+    }
+
+
+    @Override
+    public void setAttribute(String name, Object o) {
+        AttributeKey<Object> key = AttributeKey.valueOf(name);
+        Attribute<Object> attr = this.ctx.channel().attr(key);
+        attr.set(o);
+    }
+
+    @Override
+    public Object getAttribute(String name) {
+         AttributeKey<Object> key = AttributeKey.valueOf(name);
+        Attribute<Object> attr = this.ctx.channel().attr(key);
+        return attr.get();
     }
 }

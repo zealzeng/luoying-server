@@ -89,6 +89,10 @@ public class DefaultHttpResponse implements HttpResponse {
         this.response.content().writeCharSequence(cs, this.characterEncoding);
     }
 
+    public void write(CharSequence cs, Charset charset) {
+        this.response.content().writeCharSequence(cs, charset);
+    }
+
     public void setCharacterEncoding(Charset charset) {
         this.characterEncoding = charset;
     }

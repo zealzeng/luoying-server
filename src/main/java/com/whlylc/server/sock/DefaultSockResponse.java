@@ -5,8 +5,11 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
 
+import java.nio.charset.Charset;
+
 /**
  * Created by Zeal on 2018/10/21 0021.
+ * @deprecated Use DefaultSocketSession instead
  */
 public class DefaultSockResponse  implements SockResponse {
 
@@ -27,6 +30,12 @@ public class DefaultSockResponse  implements SockResponse {
     public void write(CharSequence cs) {
         //FIXME copy or wrap?
         ByteBuf byteBuf = Unpooled.copiedBuffer(cs, CharsetUtil.UTF_8);
+        this.ctx.writeAndFlush(byteBuf);
+    }
+
+    @Override
+    public void write(CharSequence cs, Charset charset) {
+        ByteBuf byteBuf = Unpooled.copiedBuffer(cs, charset);
         this.ctx.writeAndFlush(byteBuf);
     }
 }

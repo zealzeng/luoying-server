@@ -34,7 +34,7 @@ public class DefaultHttpServerHandler extends SimpleChannelInboundHandler<FullHt
         }
 
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
-        HttpRequest _request = new DefaultHttpRequest(httpService.getServiceContext(), request);
+        HttpRequest _request = new DefaultHttpRequest(httpService.getServiceContext(), request, ctx);
         HttpResponse _response = new DefaultHttpResponse(ctx, response);
 
         //TODO Handle exception

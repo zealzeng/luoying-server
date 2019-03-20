@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
+ * Similar to HttpServletResponse
  * Created by Zeal on 2018/9/16 0016.
  */
 public interface HttpResponse extends ServiceResponse {
@@ -30,9 +31,9 @@ public interface HttpResponse extends ServiceResponse {
 
     public void sendRedirect(String location);
 
-    public void write(byte[] bytes);
-
-    public void write(CharSequence cs);
+//    public void write(byte[] bytes);
+//
+//    public void write(CharSequence cs);
 
     public void setCharacterEncoding(Charset charset);
 

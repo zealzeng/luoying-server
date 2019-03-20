@@ -1,6 +1,7 @@
 package com.whlylc.server.sock;
 
 import com.whlylc.server.ChannelServiceHandler;
+import com.whlylc.server.ServiceRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -20,8 +21,9 @@ public class DefaultSockServerHandler extends SimpleChannelInboundHandler<ByteBu
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf byteBuf) throws Exception {
         DefaultSockRequest request = new DefaultSockRequest(sockService.getServiceContext(), ctx, byteBuf);
-        DefaultSockResponse response = new DefaultSockResponse(ctx);
-        this.sockService.service(request, response);
+        //DefaultSockResponse response = new DefaultSockResponse(ctx);
+        SockSession session = request.getSession(true);
+        this.sockService.service((ServiceRequest) request, session);
     }
 
 

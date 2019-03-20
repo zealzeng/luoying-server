@@ -7,8 +7,8 @@ import com.whlylc.server.ServiceResponse;
  */
 public interface SockResponse extends ServiceResponse {
 
-    void write(byte[] bytes);
-
-    void write(CharSequence cs);
+//    void write(byte[] bytes);
+//
+//    void write(CharSequence cs);
 
 }
