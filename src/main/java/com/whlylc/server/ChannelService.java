@@ -2,25 +2,32 @@ package com.whlylc.server;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * Each channel has an service, support SSL while having time
  * Created by Zeal on 2018/10/21 0021.
  */
-public abstract class ChannelService<C extends Channel> {
+public abstract class ChannelService<C extends Channel, S extends Service> {
 
     private int port = 0;
 
-    private Channel channel = null;
+    private C channel = null;
 
-    private Service service = null;
+    private S service = null;
 
-    public ChannelService(int port, Service application) {
+    private int readerIdleTimeSeconds = 0;
+
+    private int writerIdleTimeSeconds = 0;
+
+    private int allIdleTimeSeconds = 0;
+
+    public ChannelService(int port, S application) {
         this.port = port;
         this.service = application;
     }
 
-    public void setChannel(Channel channel) {
+    public void setChannel(C channel) {
         this.channel = channel;
     }
 
@@ -37,7 +44,7 @@ public abstract class ChannelService<C extends Channel> {
         return this.port;
     }
 
-    public Service getService() {
+    public S getService() {
         return service;
     }
 
@@ -51,7 +58,11 @@ public abstract class ChannelService<C extends Channel> {
         beforeInitChannel(ch);
         //Fill business handler
         ChannelPipeline pipeline = ch.pipeline();
-        pipeline.addLast(createChannelServiceHandler());
+        ChannelServiceHandler handler = createChannelServiceHandler();
+        if (handler != null) {
+            handler.setService(service);
+            pipeline.addLast(handler);
+        }
         //After
         afterInitChannel(ch);
     }
@@ -61,13 +72,17 @@ public abstract class ChannelService<C extends Channel> {
      * @param ch
      */
     public void beforeInitChannel(C ch) {
+        ChannelPipeline pipeline = ch.pipeline();
+        if (this.readerIdleTimeSeconds > 0 || this.writerIdleTimeSeconds > 0 || this.allIdleTimeSeconds > 0) {
+            pipeline.addLast(new IdleStateHandler(this.readerIdleTimeSeconds, this.writerIdleTimeSeconds, this.allIdleTimeSeconds));
+        }
     }
 
     /**
      * Create handler for each request
      * @return
      */
-    public abstract ChannelServiceHandler createChannelServiceHandler();
+    public abstract ChannelServiceHandler<S> createChannelServiceHandler();
 
     /**
      * Ater initialize channel
@@ -76,4 +91,27 @@ public abstract class ChannelService<C extends Channel> {
     public void afterInitChannel(C ch) {
     }
 
+    public int getReaderIdleTimeSeconds() {
+        return readerIdleTimeSeconds;
+    }
+
+    public void setReaderIdleTimeSeconds(int readerIdleTimeSeconds) {
+        this.readerIdleTimeSeconds = readerIdleTimeSeconds;
+    }
+
+    public int getWriterIdleTimeSeconds() {
+        return writerIdleTimeSeconds;
+    }
+
+    public void setWriterIdleTimeSeconds(int writerIdleTimeSeconds) {
+        this.writerIdleTimeSeconds = writerIdleTimeSeconds;
+    }
+
+    public int getAllIdleTimeSeconds() {
+        return allIdleTimeSeconds;
+    }
+
+    public void setAllIdleTimeSeconds(int allIdleTimeSeconds) {
+        this.allIdleTimeSeconds = allIdleTimeSeconds;
+    }
 }

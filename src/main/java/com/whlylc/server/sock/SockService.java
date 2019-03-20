@@ -8,8 +8,14 @@ import com.whlylc.server.GenericService;
  * Socket service extraction
  * Created by Zeal on 2018/10/21 0021.
  */
-public abstract  class SockService extends GenericService {
+public abstract class SockService extends GenericService {
 
+    /**
+     * @param request
+     * @param response
+     * @throws Exception Pay attention, if exception's thrown, connection will be closed by default
+     * @see  com.whlylc.server.sock.DefaultSockServerHandler
+     */
     @Override
     public void service(ServiceRequest request, ServiceResponse response) throws Exception {
         if (!(request instanceof SockRequest) && (response instanceof SockResponse)) {

@@ -3,6 +3,7 @@ package com.whlylc.server.http;
 
 import com.whlylc.server.ChannelServiceHandler;
 
+import com.whlylc.server.ChannelServiceInboundHandler;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,7 +18,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 /**
  * Created by Zeal on 2018/9/15 0015.
  */
-public class DefaultHttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> implements ChannelServiceHandler {
+public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<FullHttpRequest,HttpService> {//SimpleChannelInboundHandler<FullHttpRequest> implements ChannelServiceHandler<HttpService> {
 
     private HttpService httpService = null;
 
@@ -75,8 +76,14 @@ public class DefaultHttpServerHandler extends SimpleChannelInboundHandler<FullHt
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
-//    @Override
-//    public HttpService getApplication() {
-//        return this.application;
-//    }
+    @Override
+    public HttpService getService() {
+        return this.httpService;
+    }
+
+    @Override
+    public void setService(HttpService service) {
+        this.httpService = service;
+    }
+
 }
