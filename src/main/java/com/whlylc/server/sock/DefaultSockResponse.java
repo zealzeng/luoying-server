@@ -38,4 +38,19 @@ public class DefaultSockResponse  implements SockResponse {
         ByteBuf byteBuf = Unpooled.copiedBuffer(cs, charset);
         this.ctx.writeAndFlush(byteBuf);
     }
+
+    @Override
+    public void write(byte[] bytes, int futureAction) {
+
+    }
+
+    @Override
+    public void write(CharSequence cs, int futureAction) {
+
+    }
+
+    @Override
+    public void write(CharSequence cs, Charset charset, int futureAction) {
+
+    }
 }
