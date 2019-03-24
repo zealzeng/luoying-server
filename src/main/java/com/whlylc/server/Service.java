@@ -8,7 +8,7 @@ import com.whlylc.ioc.InitializingBean;
  * It's a bit like servlet and make sure the service() is stateless
  * Created by Zeal on 2018/10/21 0021.
  */
-public interface Service extends InitializingBean, DisposableBean {
+public interface Service<C extends ServiceConnection,RQ extends ServiceRequest, RP extends ServiceResponse> extends InitializingBean, DisposableBean {
 
     /**
      * Main service method
@@ -16,12 +16,35 @@ public interface Service extends InitializingBean, DisposableBean {
      * @param response
      * @throws Exception
      */
-    void service(ServiceRequest request, ServiceResponse response) throws Exception;
-
+    void service(RQ request, RP response) throws Exception;
 
     /**
      * Get service context
      * @return
      */
     ServiceContext getServiceContext();
+
+        /**
+     * Handle exception
+     * @param connection
+     * @param cause
+     * @throws Exception
+     */
+    void exceptionCaught(C connection, Throwable cause) throws Exception;
+
+    /**
+     * User event like read,write timeout
+     * @param connection
+     * @param evt
+     * @throws Exception
+     */
+    void userEventTriggered(C connection, Object evt) throws Exception;
+
+    /**
+     * Channel is inactive, might be closed by client
+     * @param connection
+     * @throws Exception
+     */
+    void channelInactive(C connection) throws Exception;;
+
 }

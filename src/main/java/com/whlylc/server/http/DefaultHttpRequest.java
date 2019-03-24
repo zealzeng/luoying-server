@@ -1,5 +1,6 @@
 package com.whlylc.server.http;
 
+import com.whlylc.server.ServiceConnection;
 import com.whlylc.server.ServiceContext;
 import com.whlylc.server.util.StringUtils;
 import com.whlylc.server.util.URLUtils;
@@ -20,8 +21,10 @@ import java.util.*;
  */
 public class DefaultHttpRequest implements HttpRequest {
 
-    /** Like servlet context */
-    private ServiceContext serviceContext = null;
+    private HttpConnection httpConnection = null;
+
+//    /** Like servlet context */
+//    private ServiceContext serviceContext = null;
 
     private ChannelHandlerContext ctx = null;
 
@@ -55,8 +58,9 @@ public class DefaultHttpRequest implements HttpRequest {
 
     private int port = 0;
 
-    public DefaultHttpRequest(ServiceContext serviceContext, FullHttpRequest request, ChannelHandlerContext ctx) {
-        this.serviceContext = serviceContext;
+    public DefaultHttpRequest(ChannelHandlerContext ctx, HttpConnection connection, FullHttpRequest request) {
+        this.httpConnection = connection;
+//        this.serviceContext = connection.getServiceContext();
         this.request = request;
         this.ctx = ctx;
         parseURI();
@@ -349,7 +353,12 @@ public class DefaultHttpRequest implements HttpRequest {
 
     @Override
     public ServiceContext getServiceContext() {
-        return this.serviceContext;
+        return this.httpConnection.getServiceContext();
+    }
+
+    @Override
+    public ServiceConnection getConnection() {
+        return this.httpConnection;
     }
 
 

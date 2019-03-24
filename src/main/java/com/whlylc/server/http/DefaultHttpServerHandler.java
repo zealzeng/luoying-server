@@ -4,6 +4,8 @@ package com.whlylc.server.http;
 import com.whlylc.server.ChannelServiceHandler;
 
 import com.whlylc.server.ChannelServiceInboundHandler;
+import com.whlylc.server.ServiceRequest;
+import com.whlylc.server.ServiceResponse;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,12 +20,26 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 /**
  * Created by Zeal on 2018/9/15 0015.
  */
-public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<FullHttpRequest,HttpService> {//SimpleChannelInboundHandler<FullHttpRequest> implements ChannelServiceHandler<HttpService> {
+public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpService,HttpConnection,HttpRequest,HttpResponse,FullHttpRequest> {
 
-    private HttpService httpService = null;
 
     public DefaultHttpServerHandler(HttpService application) {
-        this.httpService = application;
+        this.service = application;
+    }
+
+    @Override
+    protected HttpConnection createConnection(ChannelHandlerContext ctx) {
+        return new DefaultHttpConnection(service.getServiceContext(), ctx);
+    }
+
+    @Override
+    protected HttpRequest createRequest(ChannelHandlerContext ctx, HttpConnection connection, FullHttpRequest msg) {
+        return new DefaultHttpRequest(ctx, connection, msg);
+    }
+
+    @Override
+    protected HttpResponse createResponse(ChannelHandlerContext ctx, HttpConnection connection, FullHttpRequest msg) {
+        return new DefaultHttpResponse(ctx);
     }
 
     @Override
@@ -33,13 +49,13 @@ public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<FullH
             sendError(ctx, HttpResponseStatus.BAD_REQUEST);
             return;
         }
-
-        FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
-        HttpRequest _request = new DefaultHttpRequest(httpService.getServiceContext(), request, ctx);
-        HttpResponse _response = new DefaultHttpResponse(ctx, response);
+        HttpConnection connection = this.createConnection(ctx);
+        HttpRequest _request = this.createRequest(ctx, connection, request);
+        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
+        HttpResponse _response = this.createResponse(ctx, connection, request);
 
         //TODO Handle exception
-        this.httpService.service(_request, _response);
+        this.service.service(_request, _response);
 
         response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         if (!response.headers().contains(HttpHeaderNames.CONTENT_TYPE)) {
@@ -76,14 +92,14 @@ public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<FullH
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
-    @Override
-    public HttpService getService() {
-        return this.httpService;
-    }
-
-    @Override
-    public void setService(HttpService service) {
-        this.httpService = service;
-    }
+//    @Override
+//    public HttpService getService() {
+//        return this.httpService;
+//    }
+//
+//    @Override
+//    public void setService(HttpService service) {
+//        this.httpService = service;
+//    }
 
 }

@@ -1,5 +1,6 @@
 package com.whlylc.server.sock;
 
+import com.whlylc.server.ServiceConnection;
 import com.whlylc.server.ServiceRequest;
 import io.netty.buffer.ByteBuf;
 
@@ -35,5 +36,11 @@ public interface SockRequest extends ServiceRequest {
      * @return
      */
     SocketAddress getRemoteAddr();
+
+    /**
+     * Get connection
+     * @return
+     */
+    SockConnection getConnection();
 
 }

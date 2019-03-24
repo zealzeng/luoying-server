@@ -19,4 +19,11 @@ public interface ServiceRequest extends AttributeAware {
      */
     ServiceContext getServiceContext();
 
+    /**
+     * Access its connection
+     * @return
+     */
+    ServiceConnection getConnection();
+
+
 }

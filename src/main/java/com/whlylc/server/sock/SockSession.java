@@ -3,21 +3,10 @@ package com.whlylc.server.sock;
 import com.whlylc.server.ServiceSession;
 
 /**
- * Long persistent connection, allow session to write
+ * Allow session to write sth to socket connections
  * Created by Zeal on 2018/10/22 0022.
  */
-public interface SockSession extends ServiceSession,SockResponse {
+public interface SockSession extends ServiceSession {
 
-//    /**
-//     * Write byte to channel
-//     * @param bytes
-//     */
-//    void write(byte[] bytes);
-//
-//    /**
-//     * write string to channel
-//     * @param cs
-//     */
-//    void write(CharSequence cs);
 
 }

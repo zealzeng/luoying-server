@@ -1,39 +1,33 @@
 package com.whlylc.server.sock;
 
-import com.whlylc.server.ChannelServiceHandler;
 import com.whlylc.server.ChannelServiceInboundHandler;
-import com.whlylc.server.ServiceRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
+ * Default implementation of socket server handler
  * Created by Zeal on 2018/10/21 0021.
  */
-public class DefaultSockServerHandler extends ChannelServiceInboundHandler<ByteBuf,SockService> { // SimpleChannelInboundHandler<ByteBuf> implements ChannelServiceHandler<SockService> {
+public class DefaultSockServerHandler extends ChannelServiceInboundHandler<SockService,SockConnection,SockRequest,SockResponse,ByteBuf> {
 
-    private SockService sockService = null;
 
     public DefaultSockServerHandler(SockService sockApplication) {
-        this.sockService = sockApplication;
-    }
-
-
-    @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf byteBuf) throws Exception {
-        DefaultSockRequest request = new DefaultSockRequest(sockService.getServiceContext(), ctx, byteBuf);
-        //DefaultSockResponse response = new DefaultSockResponse(ctx);
-        SockSession session = request.getSession(true);
-        this.sockService.service((ServiceRequest) request, session);
+        this.service = sockApplication;
     }
 
     @Override
-    public SockService getService() {
-        return this.sockService;
+    protected SockConnection createConnection(ChannelHandlerContext ctx) {
+        return new DefaultSockConnection(service.getServiceContext(), ctx);
     }
 
     @Override
-    public void setService(SockService service) {
-        this.sockService = service;
+    protected SockRequest createRequest(ChannelHandlerContext ctx, SockConnection connection, ByteBuf msg) {
+        return new DefaultSockRequest(ctx, connection, msg);
     }
+
+    @Override
+    protected SockResponse createResponse(ChannelHandlerContext ctx, SockConnection connection, ByteBuf msg) {
+        return new DefaultSockResponse(ctx);
+    }
+
 }

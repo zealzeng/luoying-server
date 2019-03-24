@@ -19,11 +19,10 @@ public class DefaultSockRequest implements SockRequest {
     /** Session key */
     private static final AttributeKey<SockSession> SESSION_KEY = AttributeKey.valueOf("sock_session_key");
 
-    /** Like servlet context */
-    private ServiceContext serviceContext = null;
-
-    /** Netty channel handler context */
     private ChannelHandlerContext ctx = null;
+
+    private SockConnection connection = null;
+
 
     /** Byte buffer */
     private ByteBuf byteBuf = null;
@@ -31,9 +30,9 @@ public class DefaultSockRequest implements SockRequest {
     /** Attribute map */
     private Map<String,Object> attributeMap = null;
 
-    public DefaultSockRequest(ServiceContext serviceContext, ChannelHandlerContext ctx, ByteBuf byteBuf) {
-        this.serviceContext = serviceContext;
+    public DefaultSockRequest(ChannelHandlerContext ctx, SockConnection connection, ByteBuf byteBuf) {
         this.ctx = ctx;
+        this.connection = connection;
         this.byteBuf = byteBuf;
     }
 
@@ -76,10 +75,10 @@ public class DefaultSockRequest implements SockRequest {
     }
 
     public SockSession getSession(boolean create) {
-        Attribute<SockSession> attr = this.ctx.channel().attr(SESSION_KEY);
+        Attribute<SockSession> attr = ctx.channel().attr(SESSION_KEY);
         SockSession session = attr.get();
         if (session == null && create) {
-            session = new DefaultSockSession(this.ctx);
+            session = new DefaultSockSession(this.ctx, this.connection);
             attr.setIfAbsent(session);
         }
         return session;
@@ -87,16 +86,22 @@ public class DefaultSockRequest implements SockRequest {
 
     @Override
     public SocketAddress getLocalAddr() {
-        return this.ctx.channel().localAddress();
+        return ctx.channel().localAddress();
     }
 
     @Override
     public SocketAddress getRemoteAddr() {
-        return this.ctx.channel().remoteAddress();
+        return ctx.channel().remoteAddress();
     }
 
     @Override
     public ServiceContext getServiceContext() {
-        return this.serviceContext;
+        return this.connection.getServiceContext();
     }
+
+    @Override
+    public SockConnection getConnection() {
+        return this.connection;
+    }
+
 }
