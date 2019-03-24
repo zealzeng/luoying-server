@@ -1,6 +1,7 @@
 package com.whlylc.server.sock;
 
 import com.whlylc.server.ServiceContext;
+import com.whlylc.server.ServiceSession;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -18,6 +19,8 @@ public class DefaultSockConnection implements SockConnection {
     private ServiceContext serviceContext = null;
 
     private ChannelHandlerContext ctx = null;
+
+    private SockSession session = null;
 
     public DefaultSockConnection(ServiceContext serviceContext, ChannelHandlerContext ctx) {
         this.serviceContext = serviceContext;
@@ -37,6 +40,16 @@ public class DefaultSockConnection implements SockConnection {
     public void close() {
         //Close whole pipeline
         this.ctx.channel().close();
+    }
+
+    @Override
+    public SockSession getSession() {
+        return this.session;
+    }
+
+    @Override
+    public void setSession(SockSession session) {
+        this.session = session;
     }
 
 

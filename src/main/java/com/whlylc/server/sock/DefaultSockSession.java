@@ -1,6 +1,5 @@
 package com.whlylc.server.sock;
 
-import com.whlylc.server.ServiceConnection;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
@@ -16,14 +15,14 @@ public class DefaultSockSession implements SockSession {
 
     private SockConnection connection = null;
 
-    private Set<ServiceConnection> connections = null;
+    private Set<SockConnection> connections = null;
 
     private ChannelHandlerContext ctx = null;
 
     public DefaultSockSession(ChannelHandlerContext ctx, SockConnection connection) {
         this.ctx = ctx;
         this.connection = connection;
-        Set<ServiceConnection> connections = new HashSet<>(1);
+        Set<SockConnection> connections = new HashSet<>(1);
         connections.add(this.connection);
         this.connections = connections;
     }
@@ -34,7 +33,7 @@ public class DefaultSockSession implements SockSession {
     }
 
     @Override
-    public Set<ServiceConnection> getConnections() {
+    public Set<SockConnection> getConnections() {
         return this.connections;
     }
 

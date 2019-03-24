@@ -80,6 +80,7 @@ public class DefaultSockRequest implements SockRequest {
         if (session == null && create) {
             session = new DefaultSockSession(this.ctx, this.connection);
             attr.setIfAbsent(session);
+            this.connection.setSession(session);
         }
         return session;
     }

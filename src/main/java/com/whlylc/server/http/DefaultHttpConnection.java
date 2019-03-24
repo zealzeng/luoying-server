@@ -52,4 +52,14 @@ public class DefaultHttpConnection implements HttpConnection {
     public void close() {
         this.ctx.channel().close();
     }
+
+    @Override
+    public HttpSession getSession() {
+        return null;
+    }
+
+    @Override
+    public void setSession(HttpSession session) {
+
+    }
 }
