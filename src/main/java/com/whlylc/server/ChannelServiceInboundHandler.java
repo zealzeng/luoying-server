@@ -17,7 +17,7 @@ public abstract class ChannelServiceInboundHandler<T,S extends Service> extends 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         ctx.fireExceptionCaught(cause);
-        ctx.close();
+        //ctx.close();
     }
 
     /**
