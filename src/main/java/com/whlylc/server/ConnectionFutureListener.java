@@ -13,4 +13,22 @@ public interface ConnectionFutureListener {
 
     void complete(ConnectionFuture connectionFuture);
 
+    ConnectionFutureListener CLOSE = new ConnectionFutureListener() {
+        @Override
+        public void complete(ConnectionFuture connectionFuture) {
+            connectionFuture.getConnection().close();
+        }
+    };
+
+    ConnectionFutureListener CLOSE_ON_FAILURE = new ConnectionFutureListener() {
+        @Override
+        public void complete(ConnectionFuture connectionFuture) {
+            if (!connectionFuture.isSuccess()) {
+                connectionFuture.getConnection().close();
+            }
+        }
+    };
+
+
+
 }
