@@ -1,15 +1,10 @@
 package com.whlylc.server.http;
 
-
-import com.whlylc.server.ChannelServiceHandler;
-
 import com.whlylc.server.ChannelServiceInboundHandler;
-import com.whlylc.server.ServiceRequest;
-import com.whlylc.server.ServiceResponse;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
@@ -20,12 +15,13 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 /**
  * Created by Zeal on 2018/9/15 0015.
  */
+@ChannelHandler.Sharable
 public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpService,HttpConnection,HttpRequest,HttpResponse,FullHttpRequest> {
 
 
-    public DefaultHttpServerHandler(HttpService application) {
-        this.service = application;
-    }
+//    public DefaultHttpServerHandler(HttpService application) {
+//        this.service = application;
+//    }
 
     @Override
     protected HttpConnection createConnection(ChannelHandlerContext ctx) {
@@ -39,7 +35,7 @@ public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpS
 
     @Override
     protected HttpResponse createResponse(ChannelHandlerContext ctx, HttpConnection connection, FullHttpRequest msg) {
-        return new DefaultHttpResponse(ctx);
+        return new DefaultHttpResponse(ctx, connection);
     }
 
     @Override
@@ -49,9 +45,10 @@ public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpS
             sendError(ctx, HttpResponseStatus.BAD_REQUEST);
             return;
         }
+        //FIXME Bad bad codes.....
         HttpConnection connection = this.createConnection(ctx);
         HttpRequest _request = this.createRequest(ctx, connection, request);
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
+        DefaultFullHttpResponse response = ((DefaultHttpConnection) connection).getResponse();
         HttpResponse _response = this.createResponse(ctx, connection, request);
 
         //TODO Handle exception

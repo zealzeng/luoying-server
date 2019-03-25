@@ -3,7 +3,7 @@ package com.whlylc.server;
 import io.netty.channel.ChannelHandler;
 
 /**
- * Create handler instance for each request
+ * The channel handler should be sharable
  * Created by Zeal on 2018/10/21 0021.
  */
 public interface ChannelServiceHandler<S extends Service> extends ChannelHandler {

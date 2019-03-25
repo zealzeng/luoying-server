@@ -9,7 +9,7 @@ import java.util.List;
  * Similar to HttpServletResponse
  * Created by Zeal on 2018/9/16 0016.
  */
-public interface HttpResponse extends ServiceResponse {
+public interface HttpResponse extends ServiceResponse<HttpConnection> {
 
      void setContentType(String type);
 
@@ -31,13 +31,11 @@ public interface HttpResponse extends ServiceResponse {
 
      void sendRedirect(String location);
 
-//     void write(byte[] bytes);
-//
-//     void write(CharSequence cs);
-
      void setCharacterEncoding(Charset charset);
 
      Charset getCharacterEncoding();
+
+     HttpConnection getConnection();
 
 
 

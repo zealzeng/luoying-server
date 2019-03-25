@@ -27,7 +27,7 @@ public class DefaultSockServerHandler extends ChannelServiceInboundHandler<SockS
 
     @Override
     protected SockResponse createResponse(ChannelHandlerContext ctx, SockConnection connection, ByteBuf msg) {
-        return new DefaultSockResponse(ctx);
+        return new DefaultSockResponse(ctx, connection);
     }
 
 }

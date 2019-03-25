@@ -34,7 +34,7 @@ public class DefaultHttpChannelService extends ChannelService<SocketChannel,Http
      * @return
      */
     public ChannelServiceHandler<HttpService> createChannelServiceHandler() {
-        return new DefaultHttpServerHandler(this.getService());
+        return new DefaultHttpServerHandler();
     }
 
 

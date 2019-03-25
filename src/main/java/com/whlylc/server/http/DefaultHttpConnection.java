@@ -1,6 +1,8 @@
 package com.whlylc.server.http;
 
+import com.whlylc.server.ConnectionFuture;
 import com.whlylc.server.ServiceContext;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -18,29 +20,36 @@ public class DefaultHttpConnection implements HttpConnection {
 
     private ServiceContext serviceContext = null;
 
-    private ChannelHandlerContext ctx = null;
+    private Channel channel = null;
 
-    private FullHttpResponse response = null;
+    private DefaultFullHttpResponse response = null;
 
     private Charset characterEncoding = StandardCharsets.UTF_8;
 
     public DefaultHttpConnection(ServiceContext serviceContext, ChannelHandlerContext ctx) {
         this.serviceContext = serviceContext;
-        this.ctx = ctx;
+        this.channel = ctx.channel();
         //FIXME Support dynamic http version from request
         this.response = new DefaultFullHttpResponse(HTTP_1_1, OK);
     }
 
-    public void write(byte[] bytes) {
+    public DefaultFullHttpResponse getResponse() {
+        return response;
+    }
+
+    public ConnectionFuture<HttpConnection> write(byte[] bytes) {
         this.response.content().writeBytes(bytes);
+        return null;
     }
 
-    public void write(CharSequence cs) {
+    public ConnectionFuture<HttpConnection> write(CharSequence cs) {
         this.response.content().writeCharSequence(cs, this.characterEncoding);
+        return null;
     }
 
-    public void write(CharSequence cs, Charset charset) {
+    public ConnectionFuture<HttpConnection> write(CharSequence cs, Charset charset) {
         this.response.content().writeCharSequence(cs, charset);
+        return null;
     }
 
     @Override
@@ -50,7 +59,7 @@ public class DefaultHttpConnection implements HttpConnection {
 
     @Override
     public void close() {
-        this.ctx.channel().close();
+        this.channel.close();
     }
 
     @Override
@@ -60,6 +69,5 @@ public class DefaultHttpConnection implements HttpConnection {
 
     @Override
     public void setSession(HttpSession session) {
-
     }
 }

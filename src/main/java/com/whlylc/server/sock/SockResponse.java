@@ -1,5 +1,6 @@
 package com.whlylc.server.sock;
 
+import com.whlylc.server.ConnectionFuture;
 import com.whlylc.server.ServiceResponse;
 
 import java.nio.charset.Charset;
@@ -7,34 +8,57 @@ import java.nio.charset.Charset;
 /**
  * Created by Zeal on 2018/10/21 0021.
  */
-public interface SockResponse extends ServiceResponse {
+public interface SockResponse<C extends SockConnection> extends ServiceResponse<C> {
 
-    int DO_NOTHING = 0;
+//    int DO_NOTHING = 0;
+//
+//    int CLOSE = 1;
+//
+//    int CLOSE_ON_FAILURE = 2;
+//
+//    int FIRE_EXCEPTION_ON_FAILURE = 3;
+//
+//    /**
+//     *
+//     * @param bytes
+//     * @param futureAction DO_NOTHING, CLOSE, CLOSE_ON_FAILURE, FIRE_EXCEPTION_ON_FAILURE
+//     */
+//    ConnectionFuture<C> write(byte[] bytes, int futureAction);
+//
+//    /**
+//     * @param cs
+//     * @param futureAction DO_NOTHING, CLOSE, CLOSE_ON_FAILURE, FIRE_EXCEPTION_ON_FAILURE
+//     */
+//    void write(CharSequence cs, int futureAction);
+//
+//    /**
+//     * @param cs
+//     * @param charset
+//     * @param futureAction DO_NOTHING, CLOSE, CLOSE_ON_FAILURE, FIRE_EXCEPTION_ON_FAILURE
+//     */
+//    ConnectionFuture<SockConnection> write(CharSequence cs, Charset charset, int futureAction);
 
-    int CLOSE = 1;
-
-    int CLOSE_ON_FAILURE = 2;
-
-    int FIRE_EXCEPTION_ON_FAILURE = 3;
-
-    /**
-     *
+        /**
+     * Write bytes
      * @param bytes
-     * @param futureAction DO_NOTHING, CLOSE, CLOSE_ON_FAILURE, FIRE_EXCEPTION_ON_FAILURE
      */
-    void write(byte[] bytes, int futureAction);
+    ConnectionFuture<C> write(byte[] bytes);
+
+    /**
+     * Default charset is UTF-8
+     * @param cs
+     */
+    ConnectionFuture<C> write(CharSequence cs);
 
     /**
      * @param cs
-     * @param futureAction DO_NOTHING, CLOSE, CLOSE_ON_FAILURE, FIRE_EXCEPTION_ON_FAILURE
      */
-    void write(CharSequence cs, int futureAction);
+    ConnectionFuture<C> write(CharSequence cs, Charset charset);
 
     /**
-     * @param cs
-     * @param charset
-     * @param futureAction DO_NOTHING, CLOSE, CLOSE_ON_FAILURE, FIRE_EXCEPTION_ON_FAILURE
+     * Get connection
+     * @return
      */
-    void write(CharSequence cs, Charset charset, int futureAction);
+    C getConnection();
 
 }

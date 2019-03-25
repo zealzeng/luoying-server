@@ -23,7 +23,6 @@ public class DefaultSockRequest implements SockRequest {
 
     private SockConnection connection = null;
 
-
     /** Byte buffer */
     private ByteBuf byteBuf = null;
 
@@ -53,7 +52,6 @@ public class DefaultSockRequest implements SockRequest {
     @Override
     public void setAttribute(String name, Object o) {
         if (this.attributeMap == null) {
-            //Not thread safe
             this.attributeMap = new HashMap<>(6);
         }
         this.attributeMap.put(name, o);

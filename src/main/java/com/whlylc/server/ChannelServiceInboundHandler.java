@@ -5,6 +5,7 @@ import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 
 /**
+ * The handler should be sharable
  * Created by Zeal on 2019/3/20 0020.
  */
 public abstract class ChannelServiceInboundHandler<S extends Service,C extends ServiceConnection,RQ extends ServiceRequest,RP extends ServiceResponse,T> extends SimpleChannelInboundHandler<T> implements ChannelServiceHandler<S> {
@@ -26,6 +27,7 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
             connection = this.createConnection(ctx);
             attr.setIfAbsent(connection);
         }
+
         return connection;
     }
 
@@ -96,47 +98,9 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         service.userEventTriggered(this.getConnection(ctx), evt);
         ctx.fireUserEventTriggered(evt);
-//        if (evt instanceof IdleStateEvent) {
-//            IdleStateEvent event = (IdleStateEvent) evt;
-//            switch (event.state()) {
-//                case READER_IDLE:
-//                    handleReaderIdle(ctx);
-//                    break;
-//                case WRITER_IDLE:
-//                    handleWriterIdle(ctx);
-//                    break;
-//                case ALL_IDLE:
-//                    handleAllIdle(ctx);
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
     }
 
-//    /**
-//     * Reading timeout
-//     * @param ctx
-//     */
-//    protected void handleReaderIdle(ChannelHandlerContext ctx) {
-//        ctx.close();
-//    }
-//
-//    /**
-//     * Writing timeout
-//     * @param ctx
-//     */
-//    protected void handleWriterIdle(ChannelHandlerContext ctx) {
-//    }
-//
-//    /**
-//     * All timeout
-//     * @param ctx
-//     */
-//    protected void handleAllIdle(ChannelHandlerContext ctx) {
-//    }
-
-        /**
+    /**
      * Calls {@link ChannelHandlerContext#fireChannelInactive()} to forward
      * to the next {@link ChannelInboundHandler} in the {@link ChannelPipeline}.
      *

@@ -1,5 +1,6 @@
 package com.whlylc.server.http;
 
+import com.whlylc.server.ConnectionFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -24,19 +25,24 @@ public class DefaultHttpResponse implements HttpResponse {
 
     private Charset characterEncoding = StandardCharsets.UTF_8;
 
-    public DefaultHttpResponse(ChannelHandlerContext ctx) {
+    private HttpConnection connection = null;
+
+    public DefaultHttpResponse(ChannelHandlerContext ctx, HttpConnection connection) {
         this.ctx = ctx;
+        this.connection = connection;
         //FIXME Support dynamic http version from request
         this.response = new DefaultFullHttpResponse(HTTP_1_1, OK);
     }
 
-    public DefaultHttpResponse(ChannelHandlerContext ctx, FullHttpResponse response) {
+    public DefaultHttpResponse(ChannelHandlerContext ctx, HttpConnection connection, FullHttpResponse response) {
         this.ctx = ctx;
+        this.connection = connection;
         this.response = response;
     }
 
-    public DefaultHttpResponse(ChannelHandlerContext ctx, int responseCode) {
+    public DefaultHttpResponse(ChannelHandlerContext ctx, HttpConnection connection, int responseCode) {
         this.ctx = ctx;
+        this.connection = connection;
         HttpResponseStatus status = HttpResponseStatus.valueOf(responseCode);
         this.response = new DefaultFullHttpResponse(HTTP_1_1, status);
     }
@@ -81,16 +87,19 @@ public class DefaultHttpResponse implements HttpResponse {
         this.response.headers().set(HttpHeaderNames.LOCATION, location);
     }
 
-    public void write(byte[] bytes) {
+    public ConnectionFuture<HttpConnection> write(byte[] bytes) {
         this.response.content().writeBytes(bytes);
+        return null;
     }
 
-    public void write(CharSequence cs) {
+    public ConnectionFuture<HttpConnection> write(CharSequence cs) {
         this.response.content().writeCharSequence(cs, this.characterEncoding);
+        return null;
     }
 
-    public void write(CharSequence cs, Charset charset) {
+    public ConnectionFuture<HttpConnection> write(CharSequence cs, Charset charset) {
         this.response.content().writeCharSequence(cs, charset);
+        return null;
     }
 
     public void setCharacterEncoding(Charset charset) {
@@ -101,8 +110,10 @@ public class DefaultHttpResponse implements HttpResponse {
         return this.characterEncoding;
     }
 
-
-
+    @Override
+    public HttpConnection getConnection() {
+        return this.connection;
+    }
 
 
 }

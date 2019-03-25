@@ -16,6 +16,8 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
 
     private S service = null;
 
+    private ChannelServiceHandler<S> channelServiceHandler = null;
+
     private int readerIdleTimeSeconds = 0;
 
     private int writerIdleTimeSeconds = 0;
@@ -25,6 +27,10 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
     public ChannelService(int port, S application) {
         this.port = port;
         this.service = application;
+        this.channelServiceHandler = this.createChannelServiceHandler();
+        if (this.channelServiceHandler != null && this.channelServiceHandler.getService() == null) {
+            this.channelServiceHandler.setService(service);
+        }
     }
 
     public void setChannel(C channel) {
@@ -34,7 +40,6 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
     public Channel getChannel() {
         return this.channel;
     }
-
 
     /**
      * Each channel has a port
@@ -58,10 +63,8 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
         beforeInitChannel(ch);
         //Fill business handler
         ChannelPipeline pipeline = ch.pipeline();
-        ChannelServiceHandler handler = createChannelServiceHandler();
-        if (handler != null) {
-            handler.setService(service);
-            pipeline.addLast(handler);
+        if (this.channelServiceHandler != null) {
+            pipeline.addLast(this.channelServiceHandler);
         }
         //After
         afterInitChannel(ch);
@@ -71,7 +74,7 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
      * Before initialize channel
      * @param ch
      */
-    public void beforeInitChannel(C ch) {
+    protected void beforeInitChannel(C ch) {
         ChannelPipeline pipeline = ch.pipeline();
         if (this.readerIdleTimeSeconds > 0 || this.writerIdleTimeSeconds > 0 || this.allIdleTimeSeconds > 0) {
             pipeline.addLast(new IdleStateHandler(this.readerIdleTimeSeconds, this.writerIdleTimeSeconds, this.allIdleTimeSeconds));
@@ -79,7 +82,7 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
     }
 
     /**
-     * Create handler for each request
+     * The channel service handler should be sharable
      * @return
      */
     public abstract ChannelServiceHandler<S> createChannelServiceHandler();
