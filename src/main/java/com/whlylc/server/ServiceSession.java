@@ -6,7 +6,7 @@ import java.util.Set;
  * One session from same user can have several connections
  * Created by Zeal on 2018/10/22 0022.
  */
-public interface ServiceSession<C extends ServiceConnection> extends AttributeAware {
+public interface ServiceSession/*<C extends ServiceConnection>*/ extends AttributeAware {
 
     /**
      * Close and invalidate session
@@ -17,6 +17,6 @@ public interface ServiceSession<C extends ServiceConnection> extends AttributeAw
      * One session can have many connections
      * @return
      */
-    Set<C> getConnections();
+    Set<? extends ServiceConnection> getConnections();
 
 }

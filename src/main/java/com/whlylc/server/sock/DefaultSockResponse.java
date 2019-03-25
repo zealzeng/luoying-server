@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
 /**
  * Created by Zeal on 2018/10/21 0021.
  */
-public class DefaultSockResponse implements SockResponse<SockConnection> {
+public class DefaultSockResponse implements SockResponse/*<SockConnection>*/ {
 
     private ChannelHandlerContext ctx = null;
 

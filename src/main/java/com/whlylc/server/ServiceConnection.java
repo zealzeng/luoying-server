@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
  * Actually it's the wrapper for Channel class in netty, write and close will affect the whole pipeline
  * Created by Zeal on 2019/3/24 0024.
  */
-public interface ServiceConnection<S extends ServiceSession> {
+public interface ServiceConnection/*<S extends ServiceSession>*/ {
 
     /**
      * Write bytes
@@ -41,11 +41,11 @@ public interface ServiceConnection<S extends ServiceSession> {
      * It can be null
      * @return
      */
-    S getSession();
+    ServiceSession getSession();
 
-    /**
-     * Fill session
-     * @param session
-     */
-    void setSession(S session);
+//    /**
+//     * Fill session
+//     * @param session
+//     */
+//    void setSession(ServiceSession session);
 }

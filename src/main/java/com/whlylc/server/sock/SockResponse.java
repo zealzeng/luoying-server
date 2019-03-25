@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 /**
  * Created by Zeal on 2018/10/21 0021.
  */
-public interface SockResponse<C extends SockConnection> extends ServiceResponse<C> {
+public interface SockResponse/*<C extends SockConnection>*/ extends ServiceResponse/*<C>*/ {
 
 //    int DO_NOTHING = 0;
 //
@@ -42,23 +42,23 @@ public interface SockResponse<C extends SockConnection> extends ServiceResponse<
      * Write bytes
      * @param bytes
      */
-    ConnectionFuture<C> write(byte[] bytes);
+    ConnectionFuture<SockConnection> write(byte[] bytes);
 
     /**
      * Default charset is UTF-8
      * @param cs
      */
-    ConnectionFuture<C> write(CharSequence cs);
+    ConnectionFuture<SockConnection> write(CharSequence cs);
 
     /**
      * @param cs
      */
-    ConnectionFuture<C> write(CharSequence cs, Charset charset);
+    ConnectionFuture<SockConnection> write(CharSequence cs, Charset charset);
 
     /**
      * Get connection
      * @return
      */
-    C getConnection();
+    SockConnection getConnection();
 
 }

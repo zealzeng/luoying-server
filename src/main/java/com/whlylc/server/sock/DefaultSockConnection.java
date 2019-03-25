@@ -2,6 +2,7 @@ package com.whlylc.server.sock;
 
 import com.whlylc.server.ConnectionFuture;
 import com.whlylc.server.ServiceContext;
+import com.whlylc.server.ServiceSession;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -46,9 +47,7 @@ public class DefaultSockConnection implements SockConnection {
     @Override
     public void setSession(SockSession session) {
         this.session = session;
-
     }
-
 
     @Override
     public ConnectionFuture<SockConnection> write(byte[] bytes) {
