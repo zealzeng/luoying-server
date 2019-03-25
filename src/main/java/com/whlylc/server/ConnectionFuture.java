@@ -82,7 +82,7 @@ public class ConnectionFuture<C extends ServiceConnection> {
         return this.channelFuture.isDone();
     }
 
-    public void addListener(ConnectionFutureListener listener) {
+    public void addListener(ConnectionFutureListener<C> listener) {
         this.channelFuture.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
