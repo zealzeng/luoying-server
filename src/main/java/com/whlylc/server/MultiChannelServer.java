@@ -76,6 +76,8 @@ public class MultiChannelServer {
             b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).handler(new LoggingHandler(this.logLevel)).childHandler(new MultiChannelInitializer(this.channelApplications));
             services = new HashSet<>(this.channelApplications.length);
 
+            //FIXME We should initialize application context -> service -> open server port??
+
             //Bind listening port
             for (int i = 0; i < channelApplications.length; ++i) {
                 ChannelService channelApplication = channelApplications[i];
@@ -84,7 +86,7 @@ public class MultiChannelServer {
                 channelApplication.setChannel(channel);
                 //Initialize application
                 if (!services.contains(service)) {
-                    service.initialize();
+                    //service.initialize();
                     services.add(service);
                 }
             }
@@ -109,6 +111,16 @@ public class MultiChannelServer {
                             logger.error("Failed to initialize bean " + beanName, t);
                         }
                     }
+                }
+            }
+
+            //Initialize services
+            for (Service service : services) {
+                try {
+                    service.initialize();
+                }
+                catch (Throwable t) {
+                    logger.error("Failed to initialize service " + service, t);
                 }
             }
 
