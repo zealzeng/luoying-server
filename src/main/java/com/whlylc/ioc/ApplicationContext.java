@@ -7,21 +7,20 @@ package com.whlylc.ioc;
 public interface ApplicationContext {
 
     /**
-     * @param requiredType
-     * @param <T>
+     * @param requiredType bean class
      * @return null if it's not existed, should throw exception if duplicate type in factory
      */
     <T> T getBean(Class<T> requiredType);
 
     /**
-     * @param name
+     * @param name bean name
      * @return null if it's not existed
      */
     Object getBean(String name);
 
     /**
      * Get all bean names
-     * @return
+     * @return bean names
      */
     String[] getBeanNames();
 

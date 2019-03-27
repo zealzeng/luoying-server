@@ -12,7 +12,7 @@ public class ConcurrentServiceContext implements ServiceContext {
 
     private Map<String,Object> attrMap = new ConcurrentHashMap<>();
 
-    private ApplicationContext applicationContext = null;
+//    private ApplicationContext applicationContext = null;
 
     public ConcurrentServiceContext() {
     }
@@ -27,12 +27,12 @@ public class ConcurrentServiceContext implements ServiceContext {
         return attrMap.get(name);
     }
 
-    @Override
-    public ApplicationContext getApplicationContext() {
-        return this.applicationContext;
-    }
-
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
+//    @Override
+//    public ApplicationContext getApplicationContext() {
+//        return this.applicationContext;
+//    }
+//
+//    public void setApplicationContext(ApplicationContext applicationContext) {
+//        this.applicationContext = applicationContext;
+//    }
 }

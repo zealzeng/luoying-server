@@ -1,5 +1,7 @@
 package com.whlylc.server;
 
+import com.whlylc.ioc.ApplicationContext;
+import com.whlylc.ioc.ApplicationContextAware;
 import com.whlylc.ioc.DisposableBean;
 import com.whlylc.ioc.InitializingBean;
 
@@ -8,7 +10,7 @@ import com.whlylc.ioc.InitializingBean;
  * It's a bit like servlet and make sure the service() is stateless
  * Created by Zeal on 2018/10/21 0021.
  */
-public interface Service<C extends ServiceConnection,RQ extends ServiceRequest, RP extends ServiceResponse> extends InitializingBean, DisposableBean {
+public interface Service<C extends ServiceConnection,RQ extends ServiceRequest, RP extends ServiceResponse> extends ApplicationContextAware,InitializingBean, DisposableBean {
 
     /**
      * Main service method
@@ -45,6 +47,6 @@ public interface Service<C extends ServiceConnection,RQ extends ServiceRequest, 
      * @param connection
      * @throws Exception
      */
-    void channelInactive(C connection) throws Exception;;
+    void channelInactive(C connection) throws Exception;
 
 }

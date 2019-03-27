@@ -12,25 +12,27 @@ public abstract class GenericService<C extends ServiceConnection,RQ extends Serv
 
     protected ConcurrentServiceContext serviceContext = new ConcurrentServiceContext();
 
+    protected ApplicationContext applicationContext = null;
+
     @Override
     public void initialize() throws Exception {
     }
 
     @Override
     public void destroy() throws Exception {
-        ApplicationContext applicationContext = this.getServiceContext().getApplicationContext();
-        String[] beanNames = applicationContext.getBeanNames();
-        for (String beanName : beanNames) {
-            Object bean = applicationContext.getBean(beanName);
-            if (bean == null || !(bean instanceof DisposableBean)) {
-                continue;
-            }
-            try {
-                ((DisposableBean) bean).destroy();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        ApplicationContext applicationContext = this.getApplicationContext();
+//        String[] beanNames = applicationContext.getBeanNames();
+//        for (String beanName : beanNames) {
+//            Object bean = applicationContext.getBean(beanName);
+//            if (bean == null || !(bean instanceof DisposableBean)) {
+//                continue;
+//            }
+//            try {
+//                ((DisposableBean) bean).destroy();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     /**
@@ -43,7 +45,12 @@ public abstract class GenericService<C extends ServiceConnection,RQ extends Serv
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) {
-        this.serviceContext.setApplicationContext(applicationContext);
+        //this.ser(applicationContext);
+        this.applicationContext = applicationContext;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return this.applicationContext;
     }
 
     @Override

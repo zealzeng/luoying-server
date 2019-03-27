@@ -8,10 +8,10 @@ import com.whlylc.ioc.ApplicationContext;
  */
 public interface ServiceContext extends AttributeAware {
 
-    /**
-     * Get application context and bean factory
-     * @return
-     */
-    ApplicationContext getApplicationContext();
+//    /**
+//     * Get application context and bean factory
+//     * @return
+//     */
+//    ApplicationContext getApplicationContext();
 
 }

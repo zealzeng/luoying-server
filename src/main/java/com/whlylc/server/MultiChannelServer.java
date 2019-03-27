@@ -32,9 +32,11 @@ public class MultiChannelServer {
 
     protected int workerGroupThreads = NettyRuntime.availableProcessors() * 10;
 
-    protected EventLoopGroup bossGroup = null;
+    ServerBootstrap serverBootstrap = null;
 
-    protected EventLoopGroup workerGroup = null;
+//    protected EventLoopGroup bossGroup = null;
+//
+//    protected EventLoopGroup workerGroup = null;
 
     protected Set<Service> services = null;
 
@@ -68,61 +70,82 @@ public class MultiChannelServer {
      */
     public void startup() throws Exception {
 
-        bossGroup = new NioEventLoopGroup(this.bossGroupThreads);
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup(this.bossGroupThreads);
         //FIXME Use JDK Executor later
-        workerGroup = new NioEventLoopGroup(this.workerGroupThreads);
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup(this.workerGroupThreads);
         try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).handler(new LoggingHandler(this.logLevel)).childHandler(new MultiChannelInitializer(this.channelApplications));
+            serverBootstrap = new ServerBootstrap();
+            serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).
+                    handler(new LoggingHandler(this.logLevel)).childHandler(new MultiChannelInitializer(this.channelApplications));
+
             services = new HashSet<>(this.channelApplications.length);
-
-            //FIXME We should initialize application context -> service -> open server port??
-
-            //Bind listening port
             for (int i = 0; i < channelApplications.length; ++i) {
                 ChannelService channelApplication = channelApplications[i];
                 Service service = channelApplication.getService();
-                Channel channel = b.bind(channelApplication.getChannelPort()).sync().channel();
-                channelApplication.setChannel(channel);
                 //Initialize application
                 if (!services.contains(service)) {
-                    //service.initialize();
                     services.add(service);
                 }
             }
 
-            //FIXME Optimize the codes in this class while having time
-            //Initialize application contexts
-            applicationContexts = new HashSet<>(services.size());
-            for (Service service : services) {
-                ApplicationContext applicationContext = service.getServiceContext().getApplicationContext();
-                if (applicationContext != null) {
-                    applicationContexts.add(applicationContext);
-                }
-            }
-            for (ApplicationContext applicationContext : applicationContexts) {
-                for (String beanName : applicationContext.getBeanNames()) {
-                    Object bean = applicationContext.getBean(beanName);
-                    if (bean != null && (bean instanceof InitializingBean)) {
-                        try {
-                            ((InitializingBean) bean).initialize();
-                        }
-                        catch (Throwable t) {
-                            logger.error("Failed to initialize bean " + beanName, t);
-                        }
-                    }
-                }
-            }
 
-            //Initialize services
-            for (Service service : services) {
-                try {
-                    service.initialize();
-                }
-                catch (Throwable t) {
-                    logger.error("Failed to initialize service " + service, t);
-                }
-            }
+//            //Service binding and listening
+//            this.bindChannelServices();
+
+//            services = new HashSet<>(this.channelApplications.length);
+//
+//            //FIXME We should initialize application context -> service -> open server port??
+//
+//            //Bind listening port
+//            for (int i = 0; i < channelApplications.length; ++i) {
+//                ChannelService channelApplication = channelApplications[i];
+//                Service service = channelApplication.getService();
+//                Channel channel = b.bind(channelApplication.getChannelPort()).sync().channel();
+//                channelApplication.setChannel(channel);
+//                //Initialize application
+//                if (!services.contains(service)) {
+//                    //service.initialize();
+//                    services.add(service);
+//                }
+//            }
+
+            this.initializeApplicationContexts();
+
+//            //FIXME Optimize the codes in this class while having time
+//            //Initialize application contexts
+//            applicationContexts = new HashSet<>(services.size());
+//            for (Service service : services) {
+//                ApplicationContext applicationContext = service.getServiceContext().getApplicationContext();
+//                if (applicationContext != null) {
+//                    applicationContexts.add(applicationContext);
+//                }
+//            }
+//            for (ApplicationContext applicationContext : applicationContexts) {
+//                for (String beanName : applicationContext.getBeanNames()) {
+//                    Object bean = applicationContext.getBean(beanName);
+//                    if (bean != null && (bean instanceof InitializingBean)) {
+//                        try {
+//                            ((InitializingBean) bean).initialize();
+//                        } catch (Throwable t) {
+//                            logger.error("Failed to initialize bean " + beanName, t);
+//                        }
+//                    }
+//                }
+//            }
+
+            initializeServices();
+
+//            //Initialize services
+//            for (Service service : services) {
+//                try {
+//                    service.initialize();
+//                } catch (Throwable t) {
+//                    logger.error("Failed to initialize service " + service, t);
+//                }
+//            }
+
+            //Service binding and listening
+            this.bindChannelServices();
 
             //Shutdown hook
             addShutdownHook();
@@ -133,6 +156,94 @@ public class MultiChannelServer {
         } catch (Throwable e) {
             shutdown();
             throw e;
+        }
+    }
+
+
+    /**
+     * Biding and listening
+     *
+     * @throws Exception
+     */
+    protected void bindChannelServices() throws Exception {
+//        services = new HashSet<>(this.channelApplications.length);
+        //FIXME We should initialize application context -> service -> open server port??
+        //Bind listening port
+        for (int i = 0; i < channelApplications.length; ++i) {
+            ChannelService channelApplication = channelApplications[i];
+//            Service service = channelApplication.getService();
+            Channel channel = serverBootstrap.bind(channelApplication.getChannelPort()).sync().channel();
+            if (logger.isInfoEnabled()) {
+                logger.info("Server is listening on " + channelApplication.getChannelPort());
+            }
+            channelApplication.setChannel(channel);
+//            //Initialize application
+//            if (!services.contains(service)) {
+//                //service.initialize();
+//                services.add(service);
+//            }
+        }
+    }
+
+    /**
+     * Initialize application contexts
+     */
+    protected void initializeApplicationContexts() {
+        //FIXME Optimize the codes in this class while having time
+        //Initialize application contexts
+        applicationContexts = new HashSet<>(services.size());
+        for (Service service : services) {
+            ApplicationContext applicationContext = service.getApplicationContext();
+            if (applicationContext != null) {
+                applicationContexts.add(applicationContext);
+            }
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Start to initialize application context");
+        }
+        for (ApplicationContext applicationContext : applicationContexts) {
+            for (String beanName : applicationContext.getBeanNames()) {
+                Object bean = applicationContext.getBean(beanName);
+                if (bean != null && (bean instanceof InitializingBean)) {
+                    try {
+                        ((InitializingBean) bean).initialize();
+                        if (logger.isInfoEnabled()) {
+                            logger.info("Bean " + bean.getClass() + " is initialized");
+                        }
+                    } catch (Throwable t) {
+                        logger.error("Failed to initialize bean " + beanName, t);
+                    }
+                }
+            }
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Finish to initialize application context");
+        }
+    }
+
+    /**
+     * Initialize services
+     */
+    protected void initializeServices() {
+        if (services == null || services.size() <= 0) {
+            throw new IllegalStateException("Service is required");
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Start to initialize service");
+        }
+        //Initialize services
+        for (Service service : services) {
+            try {
+                service.initialize();
+                if (logger.isInfoEnabled()) {
+                    logger.info("Service " + service.getClass() + " is initialized");
+                }
+            } catch (Throwable t) {
+                logger.error("Failed to initialize service " + service, t);
+            }
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Finish to initialize service");
         }
     }
 
@@ -155,8 +266,7 @@ public class MultiChannelServer {
                     if (bean != null && bean instanceof DisposableBean) {
                         try {
                             ((DisposableBean) bean).destroy();
-                        }
-                        catch (Throwable t) {
+                        } catch (Throwable t) {
                             logger.warn("Failed to destroy bean " + beanNam, t);
                         }
                     }
@@ -170,8 +280,7 @@ public class MultiChannelServer {
             for (Service application : this.services) {
                 try {
                     application.destroy();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     logger.error("Failed to destroy services", e);
                 }
             }
@@ -183,16 +292,17 @@ public class MultiChannelServer {
      */
     public void shutdown() {
 
-        //Destroy application contexts
-        this.destroyApplicationContexts();
         //Destroy services
         this.destroyServices();
+        //Destroy application contexts
+        this.destroyApplicationContexts();
+
         //Release threads
-        if (bossGroup != null) {
-            bossGroup.shutdownGracefully();
+        if (this.serverBootstrap.config().group() != null) {
+            this.serverBootstrap.config().group().shutdownGracefully();
         }
-        if (workerGroup != null) {
-            bossGroup.shutdownGracefully();
+        if (this.serverBootstrap.config().childGroup() != null) {
+            this.serverBootstrap.config().childGroup().shutdownGracefully();
         }
         if (logger.isInfoEnabled()) {
             logger.info("======Server is closed======");
