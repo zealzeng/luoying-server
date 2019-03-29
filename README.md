@@ -6,7 +6,7 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
 <dependency>
   <groupId>com.whlylc</groupId>
   <artifactId>luoying-server</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.4</version>
 </dependency>
 ```
 
