@@ -2,6 +2,7 @@ package com.whlylc.server.sock;
 
 import com.whlylc.server.ChannelService;
 import com.whlylc.server.ChannelServiceHandler;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -12,9 +13,10 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * Created by Zeal on 2018/10/21 0021.
+ * @deprecated
  */
 @ChannelHandler.Sharable
-public class DefaultSockChannelService extends ChannelService<SocketChannel,SockService> {
+public class DefaultSockChannelService extends ChannelService<SockService> {
 
     private LengthFieldPrepender lengthFieldPrepender = new LengthFieldPrepender(4);
 
@@ -27,7 +29,7 @@ public class DefaultSockChannelService extends ChannelService<SocketChannel,Sock
      *
      * @param ch
      */
-    public void beforeInitChannel(SocketChannel ch) {
+    public void beforeInitChannel(Channel ch) {
         super.beforeInitChannel(ch);
         ChannelPipeline pipeline = ch.pipeline();
         //Not sharable
@@ -41,6 +43,6 @@ public class DefaultSockChannelService extends ChannelService<SocketChannel,Sock
 
     @Override
     public ChannelServiceHandler<SockService> createChannelServiceHandler() {
-        return new DefaultSockServerHandler(this.getService());
+        return new DefaultSockServerHandler();
     }
 }

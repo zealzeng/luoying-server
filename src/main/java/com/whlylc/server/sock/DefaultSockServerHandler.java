@@ -12,11 +12,6 @@ import io.netty.channel.ChannelHandlerContext;
 @ChannelHandler.Sharable
 public class DefaultSockServerHandler extends ChannelServiceInboundHandler<SockService,SockConnection,SockRequest,SockResponse,ByteBuf> {
 
-
-    public DefaultSockServerHandler(SockService sockApplication) {
-        this.service = sockApplication;
-    }
-
     @Override
     protected SockConnection createConnection(ChannelHandlerContext ctx) {
         return new DefaultSockConnection(service.getServiceContext(), ctx);

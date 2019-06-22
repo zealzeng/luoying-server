@@ -13,6 +13,7 @@ public class TestHttpServer {
         HttpService service = new HttpService() {
             @Override
             public void service(HttpRequest request, HttpResponse response) {
+                System.out.println(request.getRequestPath());
                 response.write(request.getScheme());
                 response.write(String.valueOf(System.currentTimeMillis()));
             }

@@ -7,12 +7,13 @@ import io.netty.handler.timeout.IdleStateHandler;
 /**
  * Each channel has an service, support SSL while having time
  * Created by Zeal on 2018/10/21 0021.
+ * @deprecated
  */
-public abstract class ChannelService<C extends Channel, S extends Service> {
+public abstract class ChannelService<S extends Service> {
 
     private int port = 0;
 
-    private C channel = null;
+    private Channel channel = null;
 
     private S service = null;
 
@@ -33,7 +34,7 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
         }
     }
 
-    public void setChannel(C channel) {
+    public void setChannel(Channel channel) {
         this.channel = channel;
     }
 
@@ -58,7 +59,7 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
      * Init channel, each request will generate a socket channel
      * @param ch
      */
-    public void initChannel(C ch) {
+    public void initChannel(Channel ch) {
         //Before
         beforeInitChannel(ch);
         //Fill business handler
@@ -74,7 +75,7 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
      * Before initialize channel
      * @param ch
      */
-    protected void beforeInitChannel(C ch) {
+    protected void beforeInitChannel(Channel ch) {
         ChannelPipeline pipeline = ch.pipeline();
         if (this.readerIdleTimeSeconds > 0 || this.writerIdleTimeSeconds > 0 || this.allIdleTimeSeconds > 0) {
             pipeline.addLast(new IdleStateHandler(this.readerIdleTimeSeconds, this.writerIdleTimeSeconds, this.allIdleTimeSeconds));
@@ -91,7 +92,7 @@ public abstract class ChannelService<C extends Channel, S extends Service> {
      * Ater initialize channel
      * @param ch
      */
-    public void afterInitChannel(C ch) {
+    public void afterInitChannel(Channel ch) {
     }
 
     public int getReaderIdleTimeSeconds() {

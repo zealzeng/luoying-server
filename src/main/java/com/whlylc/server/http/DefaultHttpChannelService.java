@@ -2,6 +2,7 @@ package com.whlylc.server.http;
 
 import com.whlylc.server.ChannelService;
 import com.whlylc.server.ChannelServiceHandler;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -10,8 +11,9 @@ import io.netty.handler.codec.http.HttpServerCodec;
 
 /**
  * Created by Zeal on 2018/10/21 0021.
+ * @deprecated Merge into HttpChannelInitializer
  */
-public class DefaultHttpChannelService extends ChannelService<SocketChannel,HttpService> {
+public class DefaultHttpChannelService extends ChannelService<HttpService> {
 
     public DefaultHttpChannelService(int port, HttpService application) {
         super(port, application);
@@ -21,7 +23,7 @@ public class DefaultHttpChannelService extends ChannelService<SocketChannel,Http
      * Before initialize channel
      * @param ch
      */
-    public void beforeInitChannel(SocketChannel ch) {
+    public void beforeInitChannel(Channel ch) {
         super.beforeInitChannel(ch);
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new HttpServerCodec());

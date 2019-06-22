@@ -47,6 +47,10 @@ public class DefaultHttpResponse implements HttpResponse {
         this.response = new DefaultFullHttpResponse(HTTP_1_1, status);
     }
 
+    public FullHttpResponse getNativeResponse() {
+        return response;
+    }
+
     public void setContentType(String type) {
         this.response.headers().set(HttpHeaderNames.CONTENT_TYPE, type);
     }

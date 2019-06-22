@@ -70,6 +70,7 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
         C connection = this.getConnection(ctx);
         RQ request = this.createRequest(ctx, connection, msg);
         RP response = this.createResponse(ctx, connection, msg);
+        //FIXME Run it in WorkerPool and not in event loop
         service.service(request, response);
     }
 

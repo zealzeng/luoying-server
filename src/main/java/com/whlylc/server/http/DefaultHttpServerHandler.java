@@ -18,11 +18,6 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 @ChannelHandler.Sharable
 public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpService,HttpConnection,HttpRequest,HttpResponse,FullHttpRequest> {
 
-
-//    public DefaultHttpServerHandler(HttpService application) {
-//        this.service = application;
-//    }
-
     @Override
     protected HttpConnection createConnection(ChannelHandlerContext ctx) {
         return new DefaultHttpConnection(service.getServiceContext(), ctx);
@@ -48,11 +43,14 @@ public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpS
         //FIXME Bad bad codes.....
         HttpConnection connection = this.createConnection(ctx);
         HttpRequest _request = this.createRequest(ctx, connection, request);
-        DefaultFullHttpResponse response = ((DefaultHttpConnection) connection).getResponse();
+        //DefaultFullHttpResponse response = ((DefaultHttpConnection) connection).getResponse();
         HttpResponse _response = this.createResponse(ctx, connection, request);
+
 
         //TODO Handle exception
         this.service.service(_request, _response);
+        //FIXME dirty
+        FullHttpResponse response = ((DefaultHttpResponse) _response).getNativeResponse();
 
         response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         if (!response.headers().contains(HttpHeaderNames.CONTENT_TYPE)) {

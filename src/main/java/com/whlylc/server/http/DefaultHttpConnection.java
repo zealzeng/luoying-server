@@ -2,7 +2,10 @@ package com.whlylc.server.http;
 
 import com.whlylc.server.ConnectionFuture;
 import com.whlylc.server.ServiceContext;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -22,34 +25,34 @@ public class DefaultHttpConnection implements HttpConnection {
 
     private Channel channel = null;
 
-    private DefaultFullHttpResponse response = null;
+//    private DefaultFullHttpResponse response = null;
 
     private Charset characterEncoding = StandardCharsets.UTF_8;
 
     public DefaultHttpConnection(ServiceContext serviceContext, ChannelHandlerContext ctx) {
         this.serviceContext = serviceContext;
         this.channel = ctx.channel();
-        //FIXME Support dynamic http version from request
-        this.response = new DefaultFullHttpResponse(HTTP_1_1, OK);
+        //this.response = new DefaultFullHttpResponse(HTTP_1_1, OK);
     }
 
-    public DefaultFullHttpResponse getResponse() {
-        return response;
-    }
+//    public DefaultFullHttpResponse getResponse() {
+//        return response;
+//    }
 
     public ConnectionFuture<HttpConnection> write(byte[] bytes) {
-        this.response.content().writeBytes(bytes);
-        return null;
+         ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
+        ChannelFuture future = this.channel.writeAndFlush(byteBuf);
+        return new ConnectionFuture<>(this, future);
     }
 
     public ConnectionFuture<HttpConnection> write(CharSequence cs) {
-        this.response.content().writeCharSequence(cs, this.characterEncoding);
-        return null;
+        return this.write(cs, characterEncoding);
     }
 
     public ConnectionFuture<HttpConnection> write(CharSequence cs, Charset charset) {
-        this.response.content().writeCharSequence(cs, charset);
-        return null;
+       ByteBuf byteBuf = Unpooled.copiedBuffer(cs, charset);
+        ChannelFuture future = this.channel.writeAndFlush(byteBuf);
+        return new ConnectionFuture<>(this, future);
     }
 
     @Override

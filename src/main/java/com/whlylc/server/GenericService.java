@@ -20,19 +20,6 @@ public abstract class GenericService<C extends ServiceConnection,RQ extends Serv
 
     @Override
     public void destroy() throws Exception {
-//        ApplicationContext applicationContext = this.getApplicationContext();
-//        String[] beanNames = applicationContext.getBeanNames();
-//        for (String beanName : beanNames) {
-//            Object bean = applicationContext.getBean(beanName);
-//            if (bean == null || !(bean instanceof DisposableBean)) {
-//                continue;
-//            }
-//            try {
-//                ((DisposableBean) bean).destroy();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
     /**

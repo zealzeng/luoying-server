@@ -11,6 +11,7 @@ import java.util.Map;
 /**
  * Multiple channel initializer
  * Created by Zeal on 2018/10/21 0021.
+ * @deprecated 
  */
 public class MultiChannelInitializer extends ChannelInitializer<SocketChannel> {
 

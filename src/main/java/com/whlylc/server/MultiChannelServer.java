@@ -20,6 +20,7 @@ import java.util.Set;
 /**
  * Server with multiple ports/channels
  * Created by Zeal on 2018/10/21 0021.
+ * @deprecated
  */
 public class MultiChannelServer {
 
@@ -33,10 +34,6 @@ public class MultiChannelServer {
     protected int workerGroupThreads = NettyRuntime.availableProcessors() * 10;
 
     ServerBootstrap serverBootstrap = null;
-
-//    protected EventLoopGroup bossGroup = null;
-//
-//    protected EventLoopGroup workerGroup = null;
 
     protected Set<Service> services = null;
 
