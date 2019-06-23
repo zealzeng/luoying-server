@@ -11,51 +11,53 @@ import java.util.List;
  * Similar to HttpServletResponse
  * Created by Zeal on 2018/9/16 0016.
  */
-public interface HttpResponse extends ServiceResponse/*<HttpConnection>*/ {
+public interface HttpResponse extends ServiceResponse {
 
      void setContentType(String type);
 
      String getContentType();
 
-     void setContentLength(int len);
+     HttpResponse setContentLength(int len);
 
-     void setHeader(String name, String value);
+     HttpResponse setHeader(String name, String value);
 
      String getHeader(String name);
 
      List<String> getHeaders(String name);
 
-     void addHeader(String name, String value);
+     HttpResponse addHeader(String name, String value);
 
-     void setStatus(int sc);
+     HttpResponse setStatus(int sc);
 
      int getStatus();
 
-     void sendRedirect(String location);
+     HttpResponse sendRedirect(String location);
 
-     void setCharacterEncoding(Charset charset);
+     HttpResponse setCharacterEncoding(Charset charset);
 
      Charset getCharacterEncoding();
 
      HttpConnection getConnection();
 
-         /**
+     /**
      * Write bytes
      * @param bytes
      */
-    ConnectionFuture<HttpConnection> write(byte[] bytes);
+    HttpResponse write(byte[] bytes);
 
     /**
      * Default charset is UTF-8
      * @param cs
      */
-    ConnectionFuture<HttpConnection> write(CharSequence cs);
+    HttpResponse write(CharSequence cs);
 
     /**
      * @param cs
      */
-    ConnectionFuture<HttpConnection> write(CharSequence cs, Charset charset);
+    HttpResponse write(CharSequence cs, Charset charset);
 
-
+    /**
+     */
+    HttpResponse flush();
 
 }

@@ -1,11 +1,9 @@
 package com.whlylc.server.http;
 
 import com.whlylc.server.ConnectionFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.*;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -27,17 +25,16 @@ public class DefaultHttpResponse implements HttpResponse {
 
     private HttpConnection connection = null;
 
-    public DefaultHttpResponse(ChannelHandlerContext ctx, HttpConnection connection) {
+    private volatile boolean flushed = false;
+
+    private boolean keepAlive = false;
+
+    public DefaultHttpResponse(ChannelHandlerContext ctx, HttpConnection connection, FullHttpRequest msg) {
         this.ctx = ctx;
         this.connection = connection;
         //FIXME Support dynamic http version from request
         this.response = new DefaultFullHttpResponse(HTTP_1_1, OK);
-    }
-
-    public DefaultHttpResponse(ChannelHandlerContext ctx, HttpConnection connection, FullHttpResponse response) {
-        this.ctx = ctx;
-        this.connection = connection;
-        this.response = response;
+        keepAlive = HttpUtil.isKeepAlive(msg);
     }
 
     public DefaultHttpResponse(ChannelHandlerContext ctx, HttpConnection connection, int responseCode) {
@@ -59,12 +56,14 @@ public class DefaultHttpResponse implements HttpResponse {
         return this.response.headers().get(HttpHeaderNames.CONTENT_TYPE);
     }
 
-    public void setContentLength(int len) {
+    public HttpResponse setContentLength(int len) {
         this.response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, len);
+        return this;
     }
 
-    public void setHeader(String name, String value) {
+    public HttpResponse setHeader(String name, String value) {
         this.response.headers().set(name, value);
+        return this;
     }
 
     public String getHeader(String name) {
@@ -75,39 +74,62 @@ public class DefaultHttpResponse implements HttpResponse {
         return this.response.headers().getAll(name);
     }
 
-    public void addHeader(String name, String value) {
+    public HttpResponse addHeader(String name, String value) {
         this.response.headers().add(name, value);
+        return this;
     }
 
-    public void setStatus(int sc) {
+    public HttpResponse setStatus(int sc) {
         this.response.setStatus(HttpResponseStatus.valueOf(sc));
+        return this;
     }
 
     public int getStatus() {
         return this.response.status().code();
     }
 
-    public void sendRedirect(String location) {
+    public HttpResponse sendRedirect(String location) {
         this.response.headers().set(HttpHeaderNames.LOCATION, location);
+        return this;
     }
 
-    public ConnectionFuture<HttpConnection> write(byte[] bytes) {
+    public HttpResponse write(byte[] bytes) {
         this.response.content().writeBytes(bytes);
-        return null;
+        return this;
     }
 
-    public ConnectionFuture<HttpConnection> write(CharSequence cs) {
+    public HttpResponse write(CharSequence cs) {
         this.response.content().writeCharSequence(cs, this.characterEncoding);
-        return null;
+        return this;
     }
 
-    public ConnectionFuture<HttpConnection> write(CharSequence cs, Charset charset) {
+    public HttpResponse write(CharSequence cs, Charset charset) {
         this.response.content().writeCharSequence(cs, charset);
-        return null;
+        return this;
     }
 
-    public void setCharacterEncoding(Charset charset) {
+    @Override
+    public HttpResponse flush() {
+        if (flushed) {
+            return this;
+        }
+        response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
+        if (!response.headers().contains(HttpHeaderNames.CONTENT_TYPE)) {
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+        }
+        if (!keepAlive) {
+            ctx.write(response).addListener(ChannelFutureListener.CLOSE);
+        } else {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+            ctx.writeAndFlush(response);
+        }
+        this.flushed = true;
+        return this;
+    }
+
+    public HttpResponse setCharacterEncoding(Charset charset) {
         this.characterEncoding = charset;
+        return this;
     }
 
     public Charset getCharacterEncoding() {

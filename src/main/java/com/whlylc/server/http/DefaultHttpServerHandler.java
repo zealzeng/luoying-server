@@ -30,7 +30,7 @@ public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpS
 
     @Override
     protected HttpResponse createResponse(ChannelHandlerContext ctx, HttpConnection connection, FullHttpRequest msg) {
-        return new DefaultHttpResponse(ctx, connection);
+        return new DefaultHttpResponse(ctx, connection, msg);
     }
 
     @Override
@@ -40,28 +40,14 @@ public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpS
             sendError(ctx, HttpResponseStatus.BAD_REQUEST);
             return;
         }
-        //FIXME Bad bad codes.....
         HttpConnection connection = this.createConnection(ctx);
         HttpRequest _request = this.createRequest(ctx, connection, request);
-        //DefaultFullHttpResponse response = ((DefaultHttpConnection) connection).getResponse();
         HttpResponse _response = this.createResponse(ctx, connection, request);
-
-
-        //TODO Handle exception
-        this.service.service(_request, _response);
-        //FIXME dirty
-        FullHttpResponse response = ((DefaultHttpResponse) _response).getNativeResponse();
-
-        response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
-        if (!response.headers().contains(HttpHeaderNames.CONTENT_TYPE)) {
-            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+        try {
+            this.service.service(_request, _response);
         }
-        boolean keepAlive = HttpUtil.isKeepAlive(request);
-        if (!keepAlive) {
-            ctx.write(response).addListener(ChannelFutureListener.CLOSE);
-        } else {
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-            ctx.writeAndFlush(response);
+        finally {
+            _response.flush();
         }
     }
 
