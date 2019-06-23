@@ -1,7 +1,5 @@
 package com.whlylc.server.http;
 
-import com.whlylc.server.ConcurrentSession;
-
 import java.util.Set;
 
 /**

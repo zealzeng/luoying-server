@@ -9,19 +9,20 @@ import io.netty.channel.ChannelPipeline;
  * @author Zeal
  */
 @ChannelHandler.Sharable
-public abstract class ProtocolChannelInitializer<SO extends ServerOptions,C extends Channel> extends ChannelInitializer<C> {
+public abstract class ProtocolChannelInitializer<S extends Service,C extends Channel> extends ChannelInitializer<C> {
 
-    protected SO serverOptions = null;
+    //protected SO serverOptions = null;
+    protected ServerContext serverContext = null;
 
-    protected Service service = null;
+    protected S service = null;
 
     protected ChannelServiceHandler channelServiceHandler = null;
 
-    public ProtocolChannelInitializer(SO serverOptions, Service service) {
-        this.serverOptions = serverOptions;
+    public ProtocolChannelInitializer(ServerContext serverContext, S service) {
+        this.serverContext = serverContext;
         this.service = service;
         this.channelServiceHandler = this.createChannelServiceHandler();
-        this.channelServiceHandler.setService(service);
+        //this.channelServiceHandler.setService(service);
     }
 
     protected abstract ChannelServiceHandler createChannelServiceHandler();

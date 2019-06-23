@@ -1,6 +1,7 @@
 package com.whlylc.server.http;
 
 import com.whlylc.server.ChannelServiceInboundHandler;
+import com.whlylc.server.ServerContext;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
@@ -17,6 +18,10 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 @ChannelHandler.Sharable
 public class DefaultHttpServerHandler extends ChannelServiceInboundHandler<HttpService,HttpConnection,HttpRequest,HttpResponse,FullHttpRequest> {
+
+    public DefaultHttpServerHandler(ServerContext serverContext, HttpService service) {
+        super(serverContext, service);
+    }
 
     @Override
     protected HttpConnection createConnection(ChannelHandlerContext ctx) {

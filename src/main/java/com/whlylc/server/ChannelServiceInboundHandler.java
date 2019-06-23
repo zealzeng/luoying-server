@@ -4,6 +4,8 @@ import io.netty.channel.*;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 
+import java.util.concurrent.Executor;
+
 /**
  * The handler should be sharable
  * Created by Zeal on 2019/3/20 0020.
@@ -12,8 +14,15 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
 
     private static AttributeKey CONNECTION_ATTR_KEY = AttributeKey.valueOf("sock_connection_key");
 
+    protected ServerContext serverContext = null;
+
     //Like servlet
     protected S service = null;
+
+    public ChannelServiceInboundHandler(ServerContext serverContext, S service) {
+        this.serverContext = serverContext;
+        this.service = service;
+    }
 
     /**
      * Get or create service connection
@@ -70,8 +79,33 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
         C connection = this.getConnection(ctx);
         RQ request = this.createRequest(ctx, connection, msg);
         RP response = this.createResponse(ctx, connection, msg);
-        //FIXME Run it in WorkerPool and not in event loop
-        service.service(request, response);
+        Executor executor = this.getServerContext().getWorkerPoolExecutor();
+        try {
+            executor.execute(new WorkerTask(ctx, request, response));
+        }
+        //Default reject policy is abort
+        catch (Throwable t) {
+            ctx.fireExceptionCaught(t);
+        }
+    }
+
+    protected class WorkerTask implements Runnable {
+        private ChannelHandlerContext ctx = null;
+        private RQ request = null;
+        private RP response = null;
+        public WorkerTask(ChannelHandlerContext ctx, RQ request, RP response) {
+            this.ctx = ctx;
+            this.request = request;
+            this.response = response;
+        }
+        @Override
+        public void run() {
+            try {
+                service.service(request, response);
+            } catch (Throwable e) {
+                ctx.fireExceptionCaught(e);
+            }
+        }
     }
 
     /**
@@ -86,8 +120,6 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
         service.exceptionCaught(connection, cause);
         ctx.fireExceptionCaught(cause);
     }
-
-
 
     /**
      * Calls {@link ChannelHandlerContext#fireUserEventTriggered(Object)} to forward
@@ -118,8 +150,7 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
         return service;
     }
 
-    @Override
-    public void setService(S service) {
-        this.service = service;
+    public ServerContext getServerContext() {
+        return this.serverContext;
     }
 }

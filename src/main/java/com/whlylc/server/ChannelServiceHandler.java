@@ -10,6 +10,6 @@ public interface ChannelServiceHandler<S extends Service> extends ChannelHandler
 
     S getService();
 
-    void setService(S service);
+    ServerContext getServerContext();
 
 }

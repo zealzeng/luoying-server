@@ -1,7 +1,4 @@
 package com.whlylc.server.sock;
-
-//import com.whlylc.server.ServiceRequest;
-//import com.whlylc.server.ServiceResponse;
 import com.whlylc.server.GenericService;
 
 /**
@@ -10,27 +7,4 @@ import com.whlylc.server.GenericService;
  */
 public abstract class SockService extends GenericService<SockConnection,SockRequest,SockResponse> {
 
-//    /**
-//     * @param request
-//     * @param response
-//     * @throws Exception Pay attention, if exception's thrown, connection will be closed by default
-//     * @see  com.whlylc.server.sock.DefaultSockServerHandler
-//     */
-//    @Override
-//    public void service(ServiceRequest request, ServiceResponse response) throws Exception {
-//        if (!(request instanceof SockRequest) && (response instanceof SockResponse)) {
-//            throw new IllegalStateException("Not socket request or response");
-//        }
-//        SockRequest req = (SockRequest) request;
-//        SockResponse resp = (SockResponse) response;
-//        service(req, resp);
-//    }
-
-//    /**
-//     *  Socket service with  socket request and response
-//     * @param request
-//     * @param response
-//     * @throws Exception
-//     */
-//    public abstract void service(SockRequest request, SockResponse response) throws Exception;
 }

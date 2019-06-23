@@ -1,6 +1,7 @@
 package com.whlylc.server.sock;
 
 import com.whlylc.server.ChannelServiceInboundHandler;
+import com.whlylc.server.ServerContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,6 +12,10 @@ import io.netty.channel.ChannelHandlerContext;
  */
 @ChannelHandler.Sharable
 public class DefaultSockServerHandler extends ChannelServiceInboundHandler<SockService,SockConnection,SockRequest,SockResponse,ByteBuf> {
+
+    public DefaultSockServerHandler(ServerContext serverContext, SockService service) {
+        super(serverContext, service);
+    }
 
     @Override
     protected SockConnection createConnection(ChannelHandlerContext ctx) {
@@ -26,5 +31,8 @@ public class DefaultSockServerHandler extends ChannelServiceInboundHandler<SockS
     protected SockResponse createResponse(ChannelHandlerContext ctx, SockConnection connection, ByteBuf msg) {
         return new DefaultSockResponse(ctx, connection);
     }
+
+
+
 
 }

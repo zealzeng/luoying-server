@@ -67,26 +67,27 @@ public abstract class GenericService<C extends ServiceConnection,RQ extends Serv
 
     /**
      * Reading timeout
-     * @param ctx
+     * @param connection
      */
-    protected void handleReaderIdle(C ctx) {
-        ctx.close();
+    protected void handleReaderIdle(C connection) {
+        connection.close();
     }
 
     /**
      * Writing timeout
-     * @param ctx
+     * @param connection
      */
-    protected void handleWriterIdle(C ctx) {
+    protected void handleWriterIdle(C connection) {
         //Do nothing
     }
 
     /**
      * All timeout
-     * @param ctx
+     * @param connection
      */
-    protected void handleAllIdle(C ctx) {
+    protected void handleAllIdle(C connection) {
         //Do nothing
+        connection.close();
     }
 
     /**

@@ -8,24 +8,19 @@ import io.netty.channel.ChannelInitializer;
  * Default socket server with LengthFieldBasedFrameDecoder
  * Created by Zeal on 2018/10/21 0021.
  */
-public class DefaultSockServer extends NettyServer<SockServerOptions> {
+public class DefaultSockServer extends NettyServer<SockServerOptions,SockService> {
 
-    public DefaultSockServer(int port, Service service) {
+    public DefaultSockServer(int port, SockService service) {
         super(new SockServerOptions(port), service);
     }
 
-    public DefaultSockServer(SockServerOptions serverOptions, Service service) {
+    public DefaultSockServer(SockServerOptions serverOptions, SockService service) {
         super(serverOptions, service);
     }
 
     @Override
     protected ChannelInitializer createChannelInitializer() {
-        return new SockChannelInitializer(this.serverOptions, service);
+        return new SockChannelInitializer(this.serverContext, service);
     }
-
-//    public DefaultSockServer(int port, SockService application) {
-//        DefaultSockChannelService channelApplication = new DefaultSockChannelService(port, application);
-//        this.setChannelApplications(new ChannelService[] {channelApplication});
-//    }
 
 }

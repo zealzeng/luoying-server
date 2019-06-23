@@ -12,7 +12,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 /**
  * Server only has one channel and service
  */
-public abstract class NettyServer<SO extends ServerOptions> {
+public abstract class NettyServer<SO extends ServerOptions,S extends Service> {
 
     //Logger
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(NettyServer.class);
@@ -20,15 +20,17 @@ public abstract class NettyServer<SO extends ServerOptions> {
     protected Channel serverChannel = null;
 
     //Do not share the service
-    protected Service service = null;
+    protected S service = null;
 
     protected ServerBootstrap serverBootstrap = null;
 
     protected SO serverOptions = null;
 
+    protected ServerContext serverContext = null;
+
     protected LogLevel logLevel = LogLevel.INFO;
 
-    public NettyServer(SO serverOptions, Service service) {
+    public NettyServer(SO serverOptions, S service) {
         this.serverOptions = serverOptions;
         this.service = service;
     }
@@ -43,6 +45,8 @@ public abstract class NettyServer<SO extends ServerOptions> {
         try {
             //Initialize server bootstrap with server options
             this.initializeServerBootstrap();
+            //Initialize server context
+            this.initializeServerContext();
             //Initialize service first since while request comes, service should be ready
             initializeService();
             //Service binding and listening
@@ -102,6 +106,10 @@ public abstract class NettyServer<SO extends ServerOptions> {
 //            logger.info("Finish to initialize application context");
 //        }
 //    }
+
+    protected void initializeServerContext() {
+        this.serverContext = new DefaultServerContext(this.serverOptions);
+    }
 
     /**
      * Initialize server bootstrap with server options
