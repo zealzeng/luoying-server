@@ -3,6 +3,7 @@ package com.whlylc.server;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -12,7 +13,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 /**
  * Server only has one channel and service
  */
-public abstract class NettyServer<SO extends ServerOptions,S extends Service> {
+public abstract class NettyServer<SO extends ServerOptions,S extends Service> implements Server {
 
     //Logger
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(NettyServer.class);
@@ -119,10 +120,17 @@ public abstract class NettyServer<SO extends ServerOptions,S extends Service> {
         NioEventLoopGroup workerGroup = new NioEventLoopGroup(this.serverOptions.getEventLoopThreads());
         serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup).channel(this.serverOptions.getServerChannelClass()).handler(new LoggingHandler(this.logLevel));
+
         ChannelInitializer clientChannelInitializer = this.createChannelInitializer();
         if (clientChannelInitializer != null) {
             serverBootstrap.childHandler(clientChannelInitializer);
         }
+    }
+
+    protected void initializeServerBootstrapOptions() {
+        serverBootstrap.option(ChannelOption.SO_REUSEADDR, serverOptions.isReuseAddress());
+        serverBootstrap.childOption(ChannelOption.TCP_NODELAY, serverOptions.isTcpNoDelay());
+        serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, serverOptions.isTcpKeepAlive());
     }
 
     /**

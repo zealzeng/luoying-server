@@ -12,9 +12,21 @@ public class ServerOptions {
 
     public static final String DEFAULT_HOST = "0.0.0.0";
 
+    public static final boolean DEFAULT_REUSE_ADDRESS = true;
+
+    public static final boolean DEFAULT_TCP_NO_DELAY = true;
+
+    public static final boolean DEFAULT_TCP_KEEP_ALIVE = false;
+
     private int port = 0 ;
 
     private String host = DEFAULT_HOST;
+
+    private boolean reuseAddress = DEFAULT_REUSE_ADDRESS;
+
+    private boolean tcpNoDelay = DEFAULT_TCP_NO_DELAY;
+
+    private boolean tcpKeepAlive = DEFAULT_TCP_KEEP_ALIVE;
 
     private int acceptorThreads = NettyRuntime.availableProcessors() * 2;
 
@@ -27,8 +39,6 @@ public class ServerOptions {
 
     //Server channel class name
     private Class<? extends ServerChannel> serverChannelClass = NioServerSocketChannel.class;
-
-
 
     public ServerOptions(int port) {
         setPort(port);
@@ -97,6 +107,33 @@ public class ServerOptions {
 
     public ServerOptions setMaxWorkerPoolQueueSize(int maxWorkerPoolQueueSize) {
         this.maxWorkerPoolQueueSize = maxWorkerPoolQueueSize;
+        return this;
+    }
+
+    public boolean isReuseAddress() {
+        return reuseAddress;
+    }
+
+    public ServerOptions setReuseAddress(boolean reuseAddress) {
+        this.reuseAddress = reuseAddress;
+        return this;
+    }
+
+    public boolean isTcpNoDelay() {
+        return tcpNoDelay;
+    }
+
+    public ServerOptions setTcpNoDelay(boolean tcpNoDelay) {
+        this.tcpNoDelay = tcpNoDelay;
+        return this;
+    }
+
+    public boolean isTcpKeepAlive() {
+        return tcpKeepAlive;
+    }
+
+    public ServerOptions setTcpKeepAlive(boolean tcpKeepAlive) {
+        this.tcpKeepAlive = tcpKeepAlive;
         return this;
     }
 }

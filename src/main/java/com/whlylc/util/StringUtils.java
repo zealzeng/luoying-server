@@ -1,4 +1,4 @@
-package com.whlylc.server.util;
+package com.whlylc.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,15 @@ import java.util.List;
  *
  */
 public class StringUtils {
+
+    public static boolean isEmpty(CharSequence cs) {
+        return cs == null || cs.length() == 0;
+    }
+
+    public static boolean isNotEmpty(CharSequence cs) {
+        return !isEmpty(cs);
+    }
+
 	
     /**
      * <p>Checks if a CharSequence is empty (""), null or whitespace only.</p>

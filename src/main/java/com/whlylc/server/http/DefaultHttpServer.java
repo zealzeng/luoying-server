@@ -7,7 +7,7 @@ import io.netty.channel.ChannelInitializer;
  * Default http server
  * Created by Zeal on 2018/10/21 0021.
  */
-public class DefaultHttpServer extends NettyServer<HttpServerOptions,HttpService> {
+public class DefaultHttpServer extends NettyServer<HttpServerOptions,HttpService> implements HttpServer {
 
     public DefaultHttpServer(int port, HttpService service) {
         super(new HttpServerOptions(port), service);

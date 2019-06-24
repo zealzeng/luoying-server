@@ -13,12 +13,34 @@ public class ConcurrentApplicationContext implements ApplicationContext {
 
     protected Map<String,Object> beanMap = new ConcurrentHashMap<>();
 
+    protected Environment environment = null;
+
+    protected volatile boolean shutedDown = false;
+
     public ConcurrentApplicationContext() {
+        environment = new DefaultEnvironment();
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                ConcurrentApplicationContext.this.destroy();
+            }
+        });
     }
 
-    public ConcurrentApplicationContext(Map<String,Object> beanMap) {
-        this.beanMap.putAll(beanMap);
+    public ConcurrentApplicationContext(Environment environment) {
+        this.environment = environment;
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                ConcurrentApplicationContext.this.destroy();
+            }
+        });
     }
+
+
+
+//    public ConcurrentApplicationContext(Map<String,Object> beanMap) {
+//        this();
+//        this.beanMap.putAll(beanMap);
+//    }
 
     /**
      * Add bean to factory
@@ -62,19 +84,33 @@ public class ConcurrentApplicationContext implements ApplicationContext {
         return keys;
     }
 
-//    @Override
-//    public void destroy() throws Exception {
-//        Iterator<Map.Entry<String,Object>> iter = beanMap.entrySet().iterator();
-//        while (iter.hasNext()) {
-//            Object bean = iter.next().getValue();
-//            if (bean != null && (bean instanceof DisposableBean)) {
-//                try {
-//                    ((DisposableBean) bean).destroy();
-//                }
-//                catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
+    @Override
+    public Environment getEnvironment() {
+        return this.environment;
+    }
+
+//    public ConcurrentApplicationContext setEnvironment(Environment environment) {
+//        this.environment = environment;
+//        return this;
 //    }
+
+    @Override
+    public void destroy() {
+        if (shutedDown) {
+            return;
+        }
+        shutedDown = true;
+        Iterator<Map.Entry<String,Object>> iter = beanMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Object bean = iter.next().getValue();
+            if (bean != null && (bean instanceof DisposableBean)) {
+                try {
+                    ((DisposableBean) bean).destroy();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

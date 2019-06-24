@@ -1,4 +1,6 @@
-package com.whlylc.server.util;
+package com.whlylc.util;
+
+import com.whlylc.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

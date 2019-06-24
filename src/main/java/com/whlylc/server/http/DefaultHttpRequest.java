@@ -2,8 +2,8 @@ package com.whlylc.server.http;
 
 import com.whlylc.server.ServiceConnection;
 import com.whlylc.server.ServiceContext;
-import com.whlylc.server.util.StringUtils;
-import com.whlylc.server.util.URLUtils;
+import com.whlylc.util.StringUtils;
+import com.whlylc.util.URLUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;

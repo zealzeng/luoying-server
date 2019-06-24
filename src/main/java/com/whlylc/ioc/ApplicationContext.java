@@ -24,4 +24,16 @@ public interface ApplicationContext {
      */
     String[] getBeanNames();
 
+    /**
+     * Get environment
+     * @return
+     */
+    Environment getEnvironment();
+
+    /**
+     * Release bean resources
+     * @throws Exception
+     */
+    void destroy();
+
 }
