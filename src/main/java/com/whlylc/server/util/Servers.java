@@ -14,6 +14,10 @@ import com.whlylc.server.sock.SockService;
  */
 public class Servers {
 
+    public static HttpServer createHttpServer(HttpService httpService) {
+        return new DefaultHttpServer(httpService);
+    }
+
     public static HttpServer createHttpServer(int port, HttpService httpService) {
         return new DefaultHttpServer(port, httpService);
     }

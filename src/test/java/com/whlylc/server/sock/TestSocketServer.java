@@ -9,7 +9,10 @@ public class TestSocketServer {
 
     public static void main(String[] args) throws Exception {
 
-        SockService service = new SockService() {
+        ConcurrentApplicationContext ctx = new ConcurrentApplicationContext();
+        ctx.addBean("mybatis", new String("mybatisService"));
+
+        SockService service = new SockService(ctx) {
             @Override
             public void service(SockRequest request, SockResponse response) throws Exception {
                 System.out.println(request.getRequestBody().toString());
@@ -17,11 +20,6 @@ public class TestSocketServer {
             }
         };
         //Attach application if it's necessary
-        ConcurrentApplicationContext ctx = new ConcurrentApplicationContext();
-        ctx.addBean("mybatis", new String("mybatisService"));
-        service.setApplicationContext(ctx);
-
-
         DefaultSockServer server = new DefaultSockServer(9090, service);
         server.startup();
 

@@ -7,5 +7,5 @@ public interface ApplicationContextAware {
 
     ApplicationContext getApplicationContext();
 
-    void setApplicationContext(ApplicationContext applicationContext);
+//    void setApplicationContext(ApplicationContext applicationContext);
 }

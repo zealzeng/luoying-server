@@ -1,5 +1,6 @@
 package com.whlylc.server.http;
 
+import com.whlylc.ioc.ApplicationContext;
 import com.whlylc.server.ServiceRequest;
 import com.whlylc.server.ServiceResponse;
 import com.whlylc.server.GenericService;
@@ -10,21 +11,11 @@ import com.whlylc.server.GenericService;
  */
 public abstract class HttpService extends GenericService<HttpConnection,HttpRequest,HttpResponse> {
 
-//    public void service(ServiceRequest request, ServiceResponse response) throws Exception {
-//        if (!(request instanceof HttpRequest) && (response instanceof HttpResponse)) {
-//            throw new IllegalStateException("Not http request or response");
-//        }
-//        HttpRequest req = (HttpRequest) request;
-//        HttpResponse resp = (HttpResponse) response;
-//        service(req, resp);
-//    }
+    public HttpService() {
+    }
 
-//    /**
-//     * Http service with http request and response
-//     * @param request
-//     * @param response
-//     * @throws Exception
-//     */
-//    public abstract void service(RQ request, RP response) throws Exception;
+    public HttpService(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
 }

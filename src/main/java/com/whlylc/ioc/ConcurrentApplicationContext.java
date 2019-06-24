@@ -35,18 +35,12 @@ public class ConcurrentApplicationContext implements ApplicationContext {
         });
     }
 
-
-
-//    public ConcurrentApplicationContext(Map<String,Object> beanMap) {
-//        this();
-//        this.beanMap.putAll(beanMap);
-//    }
-
     /**
      * Add bean to factory
      * @param name
      * @param bean
      */
+    @Override
     public ConcurrentApplicationContext addBean(String name, Object bean) {
         this.beanMap.put(name, bean);
         return this;

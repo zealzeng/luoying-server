@@ -9,6 +9,10 @@ import io.netty.channel.ChannelInitializer;
  */
 public class DefaultHttpServer extends NettyServer<HttpServerOptions,HttpService> implements HttpServer {
 
+    public DefaultHttpServer(HttpService service) {
+        super(new HttpServerOptions(80), service);
+    }
+
     public DefaultHttpServer(int port, HttpService service) {
         super(new HttpServerOptions(port), service);
     }

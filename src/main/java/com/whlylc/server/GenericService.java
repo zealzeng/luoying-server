@@ -31,10 +31,9 @@ public abstract class GenericService<C extends ServiceConnection,RQ extends Serv
         return this.serviceContext;
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        //this.ser(applicationContext);
-        this.applicationContext = applicationContext;
-    }
+//    public void setApplicationContext(ApplicationContext applicationContext) {
+//        this.applicationContext = applicationContext;
+//    }
 
     public ApplicationContext getApplicationContext() {
         return this.applicationContext;
