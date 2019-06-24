@@ -120,7 +120,7 @@ public abstract class NettyServer<SO extends ServerOptions,S extends Service> im
         NioEventLoopGroup workerGroup = new NioEventLoopGroup(this.serverOptions.getEventLoopThreads());
         serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup).channel(this.serverOptions.getServerChannelClass()).handler(new LoggingHandler(this.logLevel));
-
+        initializeServerBootstrapOptions();
         ChannelInitializer clientChannelInitializer = this.createChannelInitializer();
         if (clientChannelInitializer != null) {
             serverBootstrap.childHandler(clientChannelInitializer);

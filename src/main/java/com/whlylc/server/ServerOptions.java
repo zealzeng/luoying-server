@@ -4,6 +4,8 @@ import io.netty.channel.ServerChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.NettyRuntime;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Server configuration parameters
  * @author Zeal
@@ -36,6 +38,14 @@ public class ServerOptions {
     private int maxWorkerPoolThreads = NettyRuntime.availableProcessors() * 10;
 
     private int maxWorkerPoolQueueSize = 1000;
+
+    private long readerIdleTime = 0;
+
+    private long writerIdleTime = 0;
+
+    private long allIdleTime = 0;
+
+    private TimeUnit idleTimeUnit = TimeUnit.MILLISECONDS;
 
     //Server channel class name
     private Class<? extends ServerChannel> serverChannelClass = NioServerSocketChannel.class;
@@ -134,6 +144,42 @@ public class ServerOptions {
 
     public ServerOptions setTcpKeepAlive(boolean tcpKeepAlive) {
         this.tcpKeepAlive = tcpKeepAlive;
+        return this;
+    }
+
+    public long getReaderIdleTime() {
+        return readerIdleTime;
+    }
+
+    public ServerOptions setReaderIdleTime(long readerIdleTime) {
+        this.readerIdleTime = readerIdleTime;
+        return this;
+    }
+
+    public long getWriterIdleTime() {
+        return writerIdleTime;
+    }
+
+    public ServerOptions setWriterIdleTime(long writerIdleTime) {
+        this.writerIdleTime = writerIdleTime;
+        return this;
+    }
+
+    public long getAllIdleTime() {
+        return allIdleTime;
+    }
+
+    public ServerOptions setAllIdleTime(long allIdleTime) {
+        this.allIdleTime = allIdleTime;
+        return this;
+    }
+
+    public TimeUnit getIdleTimeUnit() {
+        return idleTimeUnit;
+    }
+
+    public ServerOptions setIdleTimeUnit(TimeUnit idleTimeUnit) {
+        this.idleTimeUnit = idleTimeUnit;
         return this;
     }
 }
