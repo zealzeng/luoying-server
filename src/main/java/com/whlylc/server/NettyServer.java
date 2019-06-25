@@ -44,10 +44,10 @@ public abstract class NettyServer<SO extends ServerOptions,S extends Service> im
     public void startup() throws Exception {
 
         try {
-            //Initialize server bootstrap with server options
-            this.initializeServerBootstrap();
             //Initialize server context
             this.initializeServerContext();
+            //Initialize server bootstrap with server options
+            this.initializeServerBootstrap();
             //Initialize service first since while request comes, service should be ready
             initializeService();
             //Service binding and listening

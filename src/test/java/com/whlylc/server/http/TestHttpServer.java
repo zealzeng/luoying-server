@@ -24,7 +24,7 @@ public class TestHttpServer {
                 response.write(String.valueOf(System.currentTimeMillis()));
             }
         };
-        HttpServer server = Servers.createHttpServer(8080, service);
+        HttpServer server = Servers.createHttpServer(service);
         server.startup();
     }
 
