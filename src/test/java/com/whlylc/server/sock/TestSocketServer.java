@@ -1,6 +1,6 @@
 package com.whlylc.server.sock;
 
-import com.whlylc.ioc.ConcurrentApplicationContext;
+import com.whlylc.ioc.DefaultApplicationContext;
 
 /**
  * Created by Administrator on 2018/10/21 0021.
@@ -9,7 +9,7 @@ public class TestSocketServer {
 
     public static void main(String[] args) throws Exception {
 
-        ConcurrentApplicationContext ctx = new ConcurrentApplicationContext();
+        DefaultApplicationContext ctx = new DefaultApplicationContext();
         ctx.addBean("mybatis", new String("mybatisService"));
 
         SockService service = new SockService(ctx) {

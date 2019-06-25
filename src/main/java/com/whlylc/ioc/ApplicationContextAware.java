@@ -7,5 +7,4 @@ public interface ApplicationContextAware {
 
     ApplicationContext getApplicationContext();
 
-//    void setApplicationContext(ApplicationContext applicationContext);
 }

@@ -54,6 +54,11 @@ public class DefaultEnvironment implements Environment {
         initPropertySource(DEFAULT_CONFIG_FILE_NAME, null, DEFAULT_SYS_ENV_CONFIG_DIR);
     }
 
+    public DefaultEnvironment(Properties properties) {
+        initPropertySource(DEFAULT_CONFIG_FILE_NAME, null, DEFAULT_SYS_ENV_CONFIG_DIR);
+        this.properties.putAll(properties);
+    }
+
     public DefaultEnvironment(File configDirOrFile) {
         if (configDirOrFile == null || configDirOrFile.exists()) {
             throw new IllegalStateException("Parameter configDirOrFile is invalid, make sure it's not null and existed");

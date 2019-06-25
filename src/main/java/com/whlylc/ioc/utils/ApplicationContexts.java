@@ -1,9 +1,10 @@
 package com.whlylc.ioc.utils;
 
 import com.whlylc.ioc.ApplicationContext;
-import com.whlylc.ioc.ConcurrentApplicationContext;
+import com.whlylc.ioc.DefaultApplicationContext;
 import com.whlylc.ioc.DefaultEnvironment;
 import com.whlylc.ioc.Environment;
+import com.whlylc.ioc.spring.SpringApplicationContext;
 
 import java.io.File;
 
@@ -12,34 +13,43 @@ import java.io.File;
  */
 public class ApplicationContexts {
 
-    public static ApplicationContext createApplicationContext() {
-        ApplicationContext ctx = new ConcurrentApplicationContext();
-        return ctx;
+    public static DefaultApplicationContext createDefaultApplicationContext() {
+        return new DefaultApplicationContext();
     }
 
-    public static ApplicationContext createApplicationContext(File configDirOrFile) {
+    public static DefaultApplicationContext createDefaultApplicationContext(File configDirOrFile) {
         Environment environment = new DefaultEnvironment(configDirOrFile);
-        ApplicationContext ctx = new ConcurrentApplicationContext(environment);
-        return ctx;
+        return new DefaultApplicationContext(environment);
     }
 
-    public static ApplicationContext createApplicationContext(File configDir, String configFileName) {
+    public static DefaultApplicationContext createDefaultApplicationContext(File configDir, String configFileName) {
         Environment environment = new DefaultEnvironment(configDir, configFileName);
-        ApplicationContext ctx = new ConcurrentApplicationContext(environment);
-        return ctx;
+        return new DefaultApplicationContext(environment);
     }
 
-    public static ApplicationContext createApplicationContext(String sysEnvConfigDir, String configFileName) {
+    public static DefaultApplicationContext createDefaultApplicationContext(String sysEnvConfigDir, String configFileName) {
         Environment environment = new DefaultEnvironment(sysEnvConfigDir, configFileName);
-        ApplicationContext ctx = new ConcurrentApplicationContext(environment);
-        return ctx;
+        return new DefaultApplicationContext(environment);
     }
 
-    public static ApplicationContext createApplicationContext(String configDirOrFile) {
+    public static DefaultApplicationContext createDefaultApplicationContext(String configDirOrFile) {
         Environment environment = new DefaultEnvironment(configDirOrFile);
-        ApplicationContext ctx = new ConcurrentApplicationContext(environment);
-        return ctx;
+        return new DefaultApplicationContext(environment);
     }
+
+    public static ApplicationContext createSpringApplicationContext(String... configLocations) {
+        return new SpringApplicationContext(configLocations);
+    }
+
+    public static ApplicationContext createSpringApplicationContext(Class<?> annotatedClasses) {
+        return new SpringApplicationContext(annotatedClasses);
+    }
+
+    public static ApplicationContext createSpringApplicationContext(org.springframework.context.ApplicationContext springAppCtx) {
+        return new SpringApplicationContext(springAppCtx);
+    }
+
+
 
 
 

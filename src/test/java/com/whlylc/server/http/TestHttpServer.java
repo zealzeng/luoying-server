@@ -1,7 +1,6 @@
 package com.whlylc.server.http;
 
-import com.whlylc.ioc.ApplicationContext;
-import com.whlylc.ioc.ConcurrentApplicationContext;
+import com.whlylc.ioc.DefaultApplicationContext;
 import com.whlylc.ioc.utils.ApplicationContexts;
 import com.whlylc.server.util.Servers;
 
@@ -14,7 +13,7 @@ public class TestHttpServer {
     public static void main(String[] args) throws Exception {
 
         //If we need business beans, inject here
-        ApplicationContext appCtx = ApplicationContexts.createApplicationContext();
+        DefaultApplicationContext appCtx = ApplicationContexts.createDefaultApplicationContext();
         appCtx.addBean("mybatis", new String("mybatisService"));
 
         HttpService service = new HttpService(appCtx) {

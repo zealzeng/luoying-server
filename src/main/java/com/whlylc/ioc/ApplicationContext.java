@@ -30,18 +30,18 @@ public interface ApplicationContext {
      */
     Environment getEnvironment();
 
-    /**
-     * Add bean
-     * @param name
-     * @param bean
-     * @return
-     */
-    ApplicationContext addBean(String name, Object bean);
+//    /**
+//     * Add bean
+//     * @param name
+//     * @param bean
+//     * @return
+//     */
+//    ApplicationContext addBean(String name, Object bean);
 
-    /**
-     * Release bean resources
-     * @throws Exception
-     */
-    void destroy();
+//    /**
+//     * Release bean resources
+//     * @throws Exception
+//     */
+//    void destroy();
 
 }
