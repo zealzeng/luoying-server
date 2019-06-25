@@ -1,10 +1,12 @@
 package com.whlylc.ioc;
 
+import java.io.Closeable;
+
 /**
  * Application context, business bean factory, only support singleton bean
  * Created by Zeal on 2018/10/22 0022.
  */
-public interface ApplicationContext {
+public interface ApplicationContext extends Closeable {
 
     /**
      * @param requiredType bean class

@@ -72,42 +72,6 @@ public abstract class NettyServer<SO extends ServerOptions,S extends Service> im
         }
     }
 
-//    /**
-//     * Initialize application contexts
-//     */
-//    protected void initializeApplicationContexts() {
-//        //FIXME Optimize the codes in this class while having time
-//        //Initialize application contexts
-//        applicationContexts = new HashSet<>(services.size());
-//        for (Service service : services) {
-//            ApplicationContext applicationContext = service.getApplicationContext();
-//            if (applicationContext != null) {
-//                applicationContexts.add(applicationContext);
-//            }
-//        }
-//        if (logger.isInfoEnabled()) {
-//            logger.info("Start to initialize application context");
-//        }
-//        for (ApplicationContext applicationContext : applicationContexts) {
-//            for (String beanName : applicationContext.getBeanNames()) {
-//                Object bean = applicationContext.getBean(beanName);
-//                if (bean != null && (bean instanceof InitializingBean)) {
-//                    try {
-//                        ((InitializingBean) bean).initialize();
-//                        if (logger.isInfoEnabled()) {
-//                            logger.info("Bean " + bean.getClass() + " is initialized");
-//                        }
-//                    } catch (Throwable t) {
-//                        logger.error("Failed to initialize bean " + beanName, t);
-//                    }
-//                }
-//            }
-//        }
-//        if (logger.isInfoEnabled()) {
-//            logger.info("Finish to initialize application context");
-//        }
-//    }
-
     protected void initializeServerContext() {
         this.serverContext = new DefaultServerContext(this.serverOptions);
     }
@@ -165,23 +129,6 @@ public abstract class NettyServer<SO extends ServerOptions,S extends Service> im
             }
         });
     }
-
-//    private void destroyApplicationContexts() {
-//        if (applicationContexts != null && applicationContexts.size() > 0) {
-//            for (ApplicationContext applicationContext : applicationContexts) {
-//                for (String beanNam : applicationContext.getBeanNames()) {
-//                    Object bean = applicationContext.getBean(beanNam);
-//                    if (bean != null && bean instanceof DisposableBean) {
-//                        try {
-//                            ((DisposableBean) bean).destroy();
-//                        } catch (Throwable t) {
-//                            logger.warn("Failed to destroy bean " + beanNam, t);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private void destroyServices() {
         if (this.service != null) {

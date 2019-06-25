@@ -21,7 +21,7 @@ public class DefaultApplicationContext implements ApplicationContext {
 
     public DefaultApplicationContext(Environment environment) {
         this.environment = environment;
-        this.addShutdownHook();
+        //this.addShutdownHook();
     }
 
     /**
@@ -71,15 +71,7 @@ public class DefaultApplicationContext implements ApplicationContext {
         return this.environment;
     }
 
-    private void addShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                DefaultApplicationContext.this.destroy();
-            }
-        });
-    }
-
-    private void destroy() {
+    public void close() {
         Iterator<Map.Entry<String,Object>> iter = beanMap.entrySet().iterator();
         while (iter.hasNext()) {
             Object bean = iter.next().getValue();

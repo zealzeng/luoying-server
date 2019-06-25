@@ -3,6 +3,7 @@ package com.whlylc.ioc.spring;
 import com.whlylc.ioc.ApplicationContext;
 import com.whlylc.ioc.Environment;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
@@ -47,5 +48,12 @@ public class SpringApplicationContext implements ApplicationContext {
     @Override
     public Environment getEnvironment() {
         return this.springEnvironment;
+    }
+
+    public void close() {
+        if (this.springAppCtx instanceof AbstractApplicationContext) {
+            AbstractApplicationContext ctx = (AbstractApplicationContext) this.springAppCtx;
+            ctx.close();
+        }
     }
 }

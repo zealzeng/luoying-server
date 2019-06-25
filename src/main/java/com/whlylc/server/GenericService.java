@@ -20,6 +20,9 @@ public abstract class GenericService<C extends ServiceConnection,RQ extends Serv
 
     @Override
     public void destroy() throws Exception {
+        if (this.applicationContext != null) {
+            this.applicationContext.close();
+        }
     }
 
     /**
