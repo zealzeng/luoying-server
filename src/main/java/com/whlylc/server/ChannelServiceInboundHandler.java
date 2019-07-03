@@ -3,6 +3,7 @@ package com.whlylc.server;
 import io.netty.channel.*;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import io.netty.util.ReferenceCountUtil;
 
 import java.util.concurrent.Executor;
 
@@ -20,6 +21,7 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
     protected S service = null;
 
     public ChannelServiceInboundHandler(ServerContext serverContext, S service) {
+        super(false);
         this.serverContext = serverContext;
         this.service = service;
     }
@@ -81,7 +83,7 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
         RP response = this.createResponse(ctx, connection, msg);
         Executor executor = this.getServerContext().getWorkerPoolExecutor();
         try {
-            executor.execute(new WorkerTask(ctx, request, response));
+            executor.execute(new WorkerTask(ctx, msg, request, response));
         }
         //Default reject policy is abort
         catch (Throwable t) {
@@ -91,10 +93,12 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
 
     protected class WorkerTask implements Runnable {
         private ChannelHandlerContext ctx = null;
+        private T msg = null;
         private RQ request = null;
         private RP response = null;
-        public WorkerTask(ChannelHandlerContext ctx, RQ request, RP response) {
+        public WorkerTask(ChannelHandlerContext ctx, T msg, RQ request, RP response) {
             this.ctx = ctx;
+            this.msg = msg;
             this.request = request;
             this.response = response;
         }
@@ -104,6 +108,8 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
                 service.service(request, response);
             } catch (Throwable e) {
                 ctx.fireExceptionCaught(e);
+            } finally {
+                ReferenceCountUtil.release(msg);
             }
         }
     }
@@ -116,6 +122,7 @@ public abstract class ChannelServiceInboundHandler<S extends Service,C extends S
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
         C connection = this.getConnection(ctx);
         service.exceptionCaught(connection, cause);
         ctx.fireExceptionCaught(cause);
