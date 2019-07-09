@@ -6,7 +6,7 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
 <dependency>
   <groupId>com.whlylc</groupId>
   <artifactId>luoying-server</artifactId>
-  <version>0.1.4</version>
+  <version>0.2.0-beta2</version>
 </dependency>
 ```
 
@@ -16,22 +16,20 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
 
 参考TestHttpServer.java
 ```java
-    public static void main(String[] args) throws Exception {
+        //If we need business beans, inject here
+        DefaultApplicationContext appCtx = ApplicationContexts.createDefaultApplicationContext();
+        appCtx.addBean("mybatis", new String("mybatisService"));
 
-        HttpService service = new HttpService() {
+        HttpService service = new HttpService(appCtx) {
             @Override
             public void service(HttpRequest request, HttpResponse response) {
+                System.out.println(request.getRequestPath());
+                response.write(request.getScheme());
                 response.write(String.valueOf(System.currentTimeMillis()));
             }
         };
-        //If we need business beans, inject here
-        ConcurrentApplicationContext appCtx = new ConcurrentApplicationContext();
-        appCtx.addBean("mybatis", new String("mybatisService"));
-        service.setApplicationContext(appCtx);
-
-        DefaultHttpServer server = new DefaultHttpServer(8080, service);
+        HttpServer server = Servers.createHttpServer(service);
         server.startup();
-    }
 ```
 
 ## Socket服务器

@@ -1,6 +1,8 @@
 package com.whlylc.server.sock;
 
 import com.whlylc.ioc.DefaultApplicationContext;
+import com.whlylc.ioc.utils.ApplicationContexts;
+import com.whlylc.server.util.Servers;
 
 /**
  * Created by Administrator on 2018/10/21 0021.
@@ -9,7 +11,7 @@ public class TestSocketServer {
 
     public static void main(String[] args) throws Exception {
 
-        DefaultApplicationContext ctx = new DefaultApplicationContext();
+        DefaultApplicationContext ctx = ApplicationContexts.createDefaultApplicationContext();
         ctx.addBean("mybatis", new String("mybatisService"));
 
         SockService service = new SockService(ctx) {
@@ -20,7 +22,7 @@ public class TestSocketServer {
             }
         };
         //Attach application if it's necessary
-        DefaultSockServer server = new DefaultSockServer(9090, service);
+        SockServer server = Servers.createSocketServer(9090, service);
         server.startup();
 
     }
