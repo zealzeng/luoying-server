@@ -35,9 +35,10 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
 ## Socket服务器
 - socket通信协议简单使用Netty的LengthFieldBasedFrameDecoder，即长度+消息体
 ```java
-    public static void main(String[] args) throws Exception {
+        DefaultApplicationContext ctx = ApplicationContexts.createDefaultApplicationContext();
+        ctx.addBean("mybatis", new String("mybatisService"));
 
-        SockService service = new SockService() {
+        SockService service = new SockService(ctx) {
             @Override
             public void service(SockRequest request, SockResponse response) throws Exception {
                 System.out.println(request.getRequestBody().toString());
@@ -45,51 +46,45 @@ Luoying server是一个轻量级的服务器开发框架，方便开发者快速
             }
         };
         //Attach application if it's necessary
-        ConcurrentApplicationContext ctx = new ConcurrentApplicationContext();
-        ctx.addBean("mybatis", new String("mybatisService"));
-        service.setApplicationContext(ctx);
-
-
-        DefaultSockServer server = new DefaultSockServer(9090, service);
+        SockServer server = Servers.createSocketServer(9090, service);
         server.startup();
-    }
 ```    
 
-## 多端口服务器
+## 简单的IOC支持,支持配置文件, 简单适配spring
 ```java
-    public static void main(String[] args) throws Exception {
+        //默认的实现,默认去环境变量APP_CONFIG_DIR,或当前目录,当前config目录查找app.properties
+        //其它版本ApplicationContexts.createDefaultApplicationContext也可以手工设置目录或文件名
+        //同时ApplicationContext也简单实现了自己的Envvironment
+        DefaultApplicationContext appCtx = ApplicationContexts.createDefaultApplicationContext();
+        appCtx.addBean("mybatis", new String("mybatisService"));
 
-        HttpService httpService = new HttpService() {
+        HttpServer server = Servers.createHttpServer(new HttpService(appCtx) {
             @Override
             public void service(HttpRequest request, HttpResponse response) throws Exception {
-                response.write(String.valueOf(System.currentTimeMillis()));
+                response.write("Hello" + System.currentTimeMillis());
             }
-        };
-        SockService sockService = new SockService() {
-            @Override
-            public void service(SockRequest request, SockResponse response) throws Exception {
-                System.out.println(request.getRequestBody().toString());
-                response.write(String.valueOf(System.currentTimeMillis()));
-            }
-        };
-
-        //Attach application if it's necessary
-        ConcurrentApplicationContext ctx = new ConcurrentApplicationContext();
-        ctx.addBean("mybatis", new String("mybatisService"));
-        sockService.setApplicationContext(ctx);
-        httpService.setApplicationContext(ctx);
-
-        DefaultHttpChannelService httpChannelService = new DefaultHttpChannelService(8080, httpService);
-        DefaultSockChannelService sockChannelService = new DefaultSockChannelService(9090, sockService);
-        ChannelService[] services = new ChannelService[] {httpChannelService, sockChannelService};
-        MultiChannelServer server = new MultiChannelServer(services);
+        });
         server.startup();
-
-    }
 ```
 
-## 开发计划
-想实现的东西不少,当前版本结合Fabric Rest稍稳定后规划。
+```java
+        //Spring框架的简单适配, Use spring xml or annotated class
+        ApplicationContext appCtx = ApplicationContexts.createSpringApplicationContext("c:/application-context.xml");
+        HttpServer server = Servers.createHttpServer(new HttpService(appCtx) {
+            @Override
+            public void service(HttpRequest request, HttpResponse response) throws Exception {
+                response.write("Hello" + System.currentTimeMillis());
+            }
+        });
+        server.startup();
+```
 
-## 合作伙伴召集
-待定
+## 服务器参数
+主要在ServerOptions, HttpServerOptions,SockServerOptions中定义
+
+## 开发计划
+写着写着越来越像vertx了, 是有些造轮子的做法，相比的优势可能是小巧些,, 方便自己扩展自己的ChannelInitializer, 定制自己的encoder,decoder,
+我们自己的物联网项目也基于该框架, 小规模运行暂时还稳定, 毕竟只是简单的基于netty包了一层。 有些场景套接字程序可能简单的用netty好些, 毕竟
+往上封装request, response也算是一种损耗。
+
+实际的业务处理都是不推荐在evntloop中处理的,  简单用的是JDK自带线程池, 后面看disruptor是否好些。
