@@ -110,7 +110,7 @@ public class DefaultHttpRequest implements HttpRequest {
             this.queryString = _queryString;
         }
         else {
-            path = "";
+            path = _uri;
         }
         this.uri = _uri;
     }
